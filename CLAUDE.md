@@ -32,3 +32,15 @@ Quando uma decisão nova sobreviver à sessão, registre no lugar certo em vez d
 |fórmula, fator, faixa de validação|`docs/dominio-nutricional.md`|
 |escolha entre alternativas|`docs/adr/NNNN-titulo.md`|
 |escopo, critério de aceite|`docs/prd.md`|
+
+## Memória de longo prazo (ai-memory)
+
+O bloco de roteamento do ai-memory fica **só no `AGENTS.md`**, entre `<!-- ai-memory:start -->` e `<!-- ai-memory:end -->`. Não duplique aqui: este repositório trata o `AGENTS.md` como arquivo canônico, e você já vai lê-lo por causa da ordem de leitura acima.
+
+Ao refrescar o bloco, direcione o alvo explicitamente:
+
+```
+ai-memory install-instructions --target AGENTS.md --no-skills
+```
+
+Sem `--target`, o CLI detecta os dois arquivos e reinstala o bloco no `CLAUDE.md` também, desfazendo essa decisão. As skills do ai-memory estão instaladas globalmente em `~/.claude/skills/`, por isso o `--no-skills`.
