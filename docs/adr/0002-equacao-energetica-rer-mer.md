@@ -36,7 +36,7 @@ RER = 70 × (peso_kg ^ 0.75)     para cães e gatos, qualquer peso
 MER = RER × fator_do_perfil
 ```
 
-Com a tabela de fatores confirmada no MSD/Merck Veterinary Manual e reproduzida em [dominio-nutricional.md](../dominio-nutricional.md): cão 1.6 / 1.8 / 1.4 e gato 1.2 / 1.4 / 1.0 para castrado, inteiro e propenso à obesidade.
+Os fatores por espécie e perfil vêm da tabela confirmada no MSD/Merck Veterinary Manual e vivem em [dominio-nutricional.md](../dominio-nutricional.md), que é a fonte única deles. Este ADR decide a *família de equações*; os valores não são reproduzidos aqui de propósito, para não existirem duas cópias que possam divergir.
 
 Descartada também a variante linear `RER = 30 × kg + 70`, válida só entre 2 e 45 kg.
 

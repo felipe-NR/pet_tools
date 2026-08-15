@@ -54,9 +54,11 @@ Decisões, não pendências. Sair de qualquer uma exige ADR.
 
 Escritos para virar teste.
 
-1. Cão, 10 kg, castrado, 3 500 kcal/kg devolve **180 g/dia** e MER de **630 kcal**.
-2. Gato, 4 kg, castrado, 4 000 kcal/kg devolve **59 g/dia** e MER de **238 kcal**.
-3. Cão, 25 kg, propenso à obesidade, 3 800 kcal/kg devolve **288 g/dia** e MER de **1096 kcal**.
+Os critérios 1 a 3 são os três exemplos calculados à mão em [dominio-nutricional.md](./dominio-nutricional.md#exemplos-calculados-à-mão). Entradas e resultados esperados vivem lá e não são replicados aqui — cópia de número é cópia que diverge.
+
+1. Primeiro exemplo, cão adulto castrado: devolve exatamente os g/dia e o MER registrados naquele arquivo.
+2. Segundo exemplo, gato adulto castrado: idem.
+3. Terceiro exemplo, cão propenso à obesidade: idem.
 4. Peso zero, negativo ou fora da faixa da espécie bloqueia o cálculo e mostra mensagem que cita o valor recebido e a faixa esperada.
 5. EM fora de 200–8 000 kcal/kg bloqueia o cálculo com a mesma qualidade de mensagem.
 6. EM entre 200 e 2 500 ou entre 5 000 e 8 000 calcula normalmente e mostra aviso de valor atípico para ração seca.
