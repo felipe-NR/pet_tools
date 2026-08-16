@@ -1,0 +1,19 @@
+# Dependências
+node_modules/
+
+# Build e artefatos de teste
+dist/
+coverage/
+
+# Backups gerados pelo CLI do ai-memory a cada `install-instructions`
+*.bak-*
+
+# Ambiente local
+*.local
+.env
+.env.*
+!.env.example
+
+# Sistema operacional e editor
+.DS_Store
+*.swp
