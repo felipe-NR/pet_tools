@@ -1,3 +1,5 @@
+import { describeRawValue } from './fieldValidation';
+
 /**
  * Espécies e perfis suportados, e o fator de manutenção de cada combinação.
  *
@@ -45,22 +47,24 @@ const SPECIES_LABELS: Readonly<Record<Species, string>> = {
  * maintenanceEnergyFactorFor('dog', 'neutered'); // 1.6
  */
 export function maintenanceEnergyFactorFor(species: Species, profile: PetProfile): number {
-  return MAINTENANCE_ENERGY_FACTORS[species][profile];
+  return MAINTENANCE_ENERGY_FACTORS[requireSpecies(species)][requireProfile(profile)];
 }
 
 /**
  * Perfis selecionáveis para uma espécie, na ordem de exibição.
  *
- * Hoje as duas espécies suportam os mesmos três perfis, mas a UI pergunta em
- * vez de assumir: é o que sustenta o critério 9 de docs/prd.md se a tabela
- * mudar.
+ * Hoje as duas espécies suportam **os mesmos três perfis**, e o tipo da tabela
+ * obriga isso: tirar um perfil de uma espécie é erro de compilação, não lista
+ * mais curta. A função existe mesmo assim para a UI perguntar em vez de
+ * embutir a lista, de modo que o critério 8 de docs/prd.md tenha um lugar só
+ * para mudar se a tabela deixar de ser simétrica.
  *
  * @example
  * supportedProfilesFor('cat'); // ['neutered', 'intact', 'obesityProne']
  */
 export function supportedProfilesFor(species: Species): readonly PetProfile[] {
-  const factorsForSpecies = MAINTENANCE_ENERGY_FACTORS[species];
-  return PROFILE_DISPLAY_ORDER.filter((profile) => profile in factorsForSpecies);
+  requireSpecies(species);
+  return PROFILE_DISPLAY_ORDER;
 }
 
 /** Narrowing de valor vindo do formulário, onde o tipo é realmente desconhecido. */
@@ -75,5 +79,40 @@ export function isPetProfile(value: unknown): value is PetProfile {
 
 /** Rótulo em português da espécie, usado nas mensagens de validação. */
 export function speciesLabelFor(species: Species): string {
-  return SPECIES_LABELS[species];
+  return SPECIES_LABELS[requireSpecies(species)];
+}
+
+/**
+ * Exige que o valor seja uma espécie suportada, ou lança.
+ *
+ * As tabelas deste módulo são indexadas por espécie e por perfil. Sem esta
+ * guarda, um valor que burlou o tipo — vindo de URL, de estado restaurado ou
+ * de um consumidor futuro do domínio em CLI ou API — produziria
+ * `TypeError: Cannot read properties of undefined`, que não diz nada a
+ * ninguém. Com ela, produz a mensagem que AGENTS.md > Estilo de código exige.
+ *
+ * @example
+ * requireSpecies('dog');    // 'dog'
+ * requireSpecies('ferret'); // lança RangeError
+ */
+export function requireSpecies(value: unknown): Species {
+  if (!isSpecies(value)) {
+    throw new RangeError(
+      `Espécie inválida: recebido ${describeRawValue(value)}, esperado "dog" ou "cat"`,
+    );
+  }
+
+  return value;
+}
+
+/** Idem para o perfil. Ver `requireSpecies` para o porquê. */
+export function requireProfile(value: unknown): PetProfile {
+  if (!isPetProfile(value)) {
+    throw new RangeError(
+      `Perfil inválido: recebido ${describeRawValue(value)}, ` +
+        'esperado "neutered", "intact" ou "obesityProne"',
+    );
+  }
+
+  return value;
 }

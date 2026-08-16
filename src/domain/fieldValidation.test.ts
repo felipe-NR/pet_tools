@@ -31,6 +31,28 @@ describe('parseDecimalInput', () => {
   ])('rejeita %p devolvendo null', (rawValue) => {
     expect(parseDecimalInput(rawValue)).toBeNull();
   });
+
+  // Number() sozinho aceitaria todos estes e produziria um número plausível
+  // que entraria no cálculo sem ninguém perceber.
+  it.each([
+    ['0x1194'], // Number() daria 4500, uma EM válida
+    ['1e1'], // Number() daria 10, um peso válido
+    ['0b101'],
+    ['0o17'],
+    ['+5'],
+    ['5.'],
+    ['.5'],
+    ['1_000'],
+    ['Infinity'],
+  ])('rejeita o literal não decimal %p', (rawValue) => {
+    expect(parseDecimalInput(rawValue)).toBeNull();
+  });
+
+  it('rejeita o decimal que passa do maior número representável', () => {
+    // Só dígitos, então o padrão aceita; Number() estoura para Infinity.
+    // É a única forma de a guarda de finitude disparar depois do padrão.
+    expect(parseDecimalInput('9'.repeat(400))).toBeNull();
+  });
 });
 
 describe('describeRawValue', () => {

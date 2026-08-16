@@ -1,6 +1,5 @@
-import { describeRawValue } from './fieldValidation';
 import type { FieldValidation } from './fieldValidation';
-import { isPetProfile, isSpecies } from './petProfile';
+import { requireProfile, requireSpecies } from './petProfile';
 import type { PetProfile, Species } from './petProfile';
 import { calculateRestingEnergyRequirement } from './restingEnergyRequirement';
 import { calculateMaintenanceEnergyRequirement } from './maintenanceEnergyRequirement';
@@ -102,37 +101,16 @@ export function roundToWholeNumber(value: number): number {
 }
 
 function validateDailyPortionInput(input: DailyPortionInput): ValidatedDailyPortionInput {
-  const species = validatedSpecies(input.species);
+  const species = requireSpecies(input.species);
 
   return {
     species,
-    profile: validatedProfile(input.profile),
+    profile: requireProfile(input.profile),
     weightInKilograms: unwrapOrThrow(validateWeightInKilograms(input.weightInKilograms, species)),
     metabolizableEnergyKcalPerKilogram: unwrapOrThrow(
       validateMetabolizableEnergy(input.metabolizableEnergyKcalPerKilogram),
     ),
   };
-}
-
-function validatedSpecies(rawSpecies: unknown): Species {
-  if (!isSpecies(rawSpecies)) {
-    throw new RangeError(
-      `Espécie inválida: recebido ${describeRawValue(rawSpecies)}, esperado "dog" ou "cat"`,
-    );
-  }
-
-  return rawSpecies;
-}
-
-function validatedProfile(rawProfile: unknown): PetProfile {
-  if (!isPetProfile(rawProfile)) {
-    throw new RangeError(
-      `Perfil inválido: recebido ${describeRawValue(rawProfile)}, ` +
-        'esperado "neutered", "intact" ou "obesityProne"',
-    );
-  }
-
-  return rawProfile;
 }
 
 function unwrapOrThrow<T>(validation: FieldValidation<T>): T {

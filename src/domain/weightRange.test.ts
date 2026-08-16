@@ -73,7 +73,31 @@ describe('validateWeightInKilograms', () => {
 
     expect(validation).toEqual({
       valid: false,
-      message: 'Peso inválido: recebido "", esperado número entre 0.5 e 100 kg para cão',
+      message:
+        'Peso inválido: recebido "", esperado número entre 0.5 e 100 kg para cão, ' +
+        'com ponto decimal e não vírgula',
+    });
+  });
+
+  it('nomeia o formato esperado quando o valor não é numérico', () => {
+    // 12,5 está dentro da faixa: sem citar o separador, a mensagem manda o
+    // usuário fazer exatamente o que ele acabou de fazer.
+    const validation = validateWeightInKilograms('12,5', 'dog');
+
+    expect(validation).toEqual({
+      valid: false,
+      message:
+        'Peso inválido: recebido "12,5", esperado número entre 0.5 e 100 kg para cão, ' +
+        'com ponto decimal e não vírgula',
+    });
+  });
+
+  it('não cita o separador quando o número é válido e só está fora da faixa', () => {
+    const validation = validateWeightInKilograms(200, 'dog');
+
+    expect(validation).toEqual({
+      valid: false,
+      message: 'Peso inválido: recebido 200, esperado número entre 0.5 e 100 kg para cão',
     });
   });
 });

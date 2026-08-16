@@ -38,7 +38,19 @@ describe('validateMetabolizableEnergy', () => {
     expect(validateMetabolizableEnergy('')).toEqual({
       valid: false,
       message:
-        'Energia metabolizável inválida: recebido "", esperado número entre 200 e 8000 kcal/kg',
+        'Energia metabolizável inválida: recebido "", esperado número entre 200 e 8000 kcal/kg, ' +
+        'com ponto decimal e não vírgula',
+    });
+  });
+
+  it('nomeia o formato esperado quando o valor não é numérico', () => {
+    // 3.500,5 é como o rótulo escreve. Sem citar o separador, a mensagem diz
+    // que se esperava um número numa faixa em que esse valor está.
+    expect(validateMetabolizableEnergy('3.500,5')).toEqual({
+      valid: false,
+      message:
+        'Energia metabolizável inválida: recebido "3.500,5", esperado número entre 200 e ' +
+        '8000 kcal/kg, com ponto decimal e não vírgula',
     });
   });
 });

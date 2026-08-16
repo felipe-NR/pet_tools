@@ -29,18 +29,23 @@ const TYPICAL_DRY_FOOD_MAXIMUM = 5000;
  */
 export function validateMetabolizableEnergy(rawEnergy: unknown): FieldValidation<number> {
   const parsedEnergy = parseDecimalInput(rawEnergy);
+  const expectation =
+    `esperado número entre ${String(MINIMUM_KCAL_PER_KILOGRAM)} e ` +
+    `${String(MAXIMUM_KCAL_PER_KILOGRAM)} kcal/kg`;
 
-  if (
-    parsedEnergy === null ||
-    parsedEnergy < MINIMUM_KCAL_PER_KILOGRAM ||
-    parsedEnergy > MAXIMUM_KCAL_PER_KILOGRAM
-  ) {
+  if (parsedEnergy === null) {
     return {
       valid: false,
       message:
         `Energia metabolizável inválida: recebido ${describeRawValue(rawEnergy)}, ` +
-        `esperado número entre ${String(MINIMUM_KCAL_PER_KILOGRAM)} e ` +
-        `${String(MAXIMUM_KCAL_PER_KILOGRAM)} kcal/kg`,
+        `${expectation}, com ponto decimal e não vírgula`,
+    };
+  }
+
+  if (parsedEnergy < MINIMUM_KCAL_PER_KILOGRAM || parsedEnergy > MAXIMUM_KCAL_PER_KILOGRAM) {
+    return {
+      valid: false,
+      message: `Energia metabolizável inválida: recebido ${describeRawValue(rawEnergy)}, ${expectation}`,
     };
   }
 

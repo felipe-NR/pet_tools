@@ -1,6 +1,6 @@
 import { describeRawValue, parseDecimalInput } from './fieldValidation';
 import type { FieldValidation } from './fieldValidation';
-import { speciesLabelFor } from './petProfile';
+import { requireSpecies, speciesLabelFor } from './petProfile';
 import type { Species } from './petProfile';
 
 /**
@@ -29,15 +29,20 @@ const WEIGHT_RANGES: Readonly<Record<Species, WeightRangeInKilograms>> = {
  * weightRangeFor('cat'); // { minimum: 0.5, maximum: 15 }
  */
 export function weightRangeFor(species: Species): WeightRangeInKilograms {
-  return WEIGHT_RANGES[species];
+  return WEIGHT_RANGES[requireSpecies(species)];
 }
 
 /**
  * Valida o peso digitado contra a faixa da espécie.
  *
- * Aceita `unknown` porque o valor vem do formulário como string. A mensagem
- * de erro carrega o valor recebido e a faixa esperada, conforme o critério 4
- * de docs/prd.md.
+ * `rawWeight` é `unknown` porque é o campo sob validação e vem do formulário
+ * como string; `species` é precondição, já narrowada, e viola o contrato se
+ * vier errada — por isso um devolve resultado e o outro lança.
+ *
+ * A mensagem carrega o valor recebido e a faixa esperada, conforme o critério
+ * 4 de docs/prd.md. Quando o valor sequer é numérico, ela nomeia também o
+ * formato: sem isso, quem digita "12,5" lê que se esperava um número entre 0.5
+ * e 100 — faixa em que 12,5 está — e não descobre que o separador é ponto.
  *
  * @example
  * validateWeightInKilograms('20', 'cat');
@@ -49,13 +54,23 @@ export function validateWeightInKilograms(
 ): FieldValidation<number> {
   const range = weightRangeFor(species);
   const parsedWeight = parseDecimalInput(rawWeight);
+  const expectation =
+    `esperado número entre ${String(range.minimum)} e ${String(range.maximum)} kg ` +
+    `para ${speciesLabelFor(species)}`;
 
-  if (parsedWeight === null || parsedWeight < range.minimum || parsedWeight > range.maximum) {
+  if (parsedWeight === null) {
     return {
       valid: false,
       message:
-        `Peso inválido: recebido ${describeRawValue(rawWeight)}, esperado número entre ` +
-        `${String(range.minimum)} e ${String(range.maximum)} kg para ${speciesLabelFor(species)}`,
+        `Peso inválido: recebido ${describeRawValue(rawWeight)}, ${expectation}, ` +
+        'com ponto decimal e não vírgula',
+    };
+  }
+
+  if (parsedWeight < range.minimum || parsedWeight > range.maximum) {
+    return {
+      valid: false,
+      message: `Peso inválido: recebido ${describeRawValue(rawWeight)}, ${expectation}`,
     };
   }
 

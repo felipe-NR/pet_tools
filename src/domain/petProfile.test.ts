@@ -3,6 +3,8 @@ import {
   isPetProfile,
   isSpecies,
   maintenanceEnergyFactorFor,
+  requireProfile,
+  requireSpecies,
   speciesLabelFor,
   supportedProfilesFor,
 } from './petProfile';
@@ -71,5 +73,43 @@ describe('speciesLabelFor', () => {
   it('devolve o rótulo em português usado nas mensagens de erro', () => {
     expect(speciesLabelFor('dog')).toBe('cão');
     expect(speciesLabelFor('cat')).toBe('gato');
+  });
+});
+
+/**
+ * As tabelas deste módulo são indexadas por espécie e por perfil. Um valor que
+ * burlou o tipo produziria `TypeError: Cannot read properties of undefined`,
+ * que não diz nada a quem lê o log. Estas guardas trocam isso pela mensagem
+ * que AGENTS.md > Estilo de código exige.
+ */
+describe('requireSpecies', () => {
+  it.each(['dog', 'cat'] as const)('devolve %p intacto', (species) => {
+    expect(requireSpecies(species)).toBe(species);
+  });
+
+  it.each(['ferret', 'Dog', 'cachorro', '', null, undefined, 3, {}])('lança para %p', (value) => {
+    expect(() => requireSpecies(value)).toThrow(RangeError);
+  });
+
+  it('cita o valor ofensivo e os valores esperados', () => {
+    expect(() => requireSpecies('ferret')).toThrow(
+      'Espécie inválida: recebido "ferret", esperado "dog" ou "cat"',
+    );
+  });
+});
+
+describe('requireProfile', () => {
+  it.each(['neutered', 'intact', 'obesityProne'] as const)('devolve %p intacto', (profile) => {
+    expect(requireProfile(profile)).toBe(profile);
+  });
+
+  it.each(['puppy', 'pregnant', 'senior', '', null, undefined, 1.4])('lança para %p', (value) => {
+    expect(() => requireProfile(value)).toThrow(RangeError);
+  });
+
+  it('cita o valor ofensivo e os valores esperados', () => {
+    expect(() => requireProfile('puppy')).toThrow(
+      'Perfil inválido: recebido "puppy", esperado "neutered", "intact" ou "obesityProne"',
+    );
   });
 });
