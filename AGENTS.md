@@ -5,8 +5,9 @@ Este é o documento vivo do projeto: quando uma decisão nova sobrevive a uma se
 
 ## Estado atual
 
-Só existe documentação. Não há `package.json`, `src/` nem CI ainda.
-As seções "Comandos" e "Estrutura" abaixo são o **contrato que o scaffold deve satisfazer**, não descrição do que existe.
+O scaffold existe e os cinco comandos abaixo rodam. `src/domain/` está implementado e testado, cobrindo os critérios de aceite 1 a 8 de `docs/prd.md`.
+
+O que ainda não existe: a UI e os critérios 9 a 12. `src/App.tsx` é uma casca, `src/components/` ainda não foi criado e não há CI. A "Estrutura" abaixo já descreve `src/domain/`; `components/` continua sendo alvo, não descrição.
 
 ## O projeto
 
