@@ -20,7 +20,7 @@ O domínio inteiro (fórmulas, fatores, faixas de validação, avisos clínicos)
 - Vite + React + TypeScript (`strict: true`)
 - Vitest para testes, Testing Library para componentes
 - ESLint + Prettier
-- Sem framework de UI pesado. CSS Modules ou CSS puro.
+- Sem framework de UI pesado. CSS Modules: um `.module.css` ao lado de cada componente. O ADR 0001 deixou a escolha entre CSS Modules e CSS puro em aberto; ficou CSS Modules pelo escopo por componente sem depender de convenção de nomes, e sem dependência nova — o Vite já suporta.
 
 Justificativa em `docs/adr/0001-stack-e-arquitetura.md`. Trocar qualquer item acima exige um ADR novo.
 
