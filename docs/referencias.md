@@ -8,7 +8,9 @@ Antes de alterar qualquer fórmula ou fator, confira aqui de onde ele veio.
 
 |fonte|o que fornece|status|
 |-|-|-|
-|[MSD / Merck Veterinary Manual — Nutritional Requirements of Small Animals](https://www.msdvetmanual.com/management-and-nutrition/nutrition-small-animals/nutritional-requirements-of-small-animals)|`RER = 70 × kg^0.75`, variante linear `30 × kg + 70` restrita a 2–45 kg, e a tabela completa de fatores de MER por espécie e perfil|**verificado em 2026-08-15.** É a fonte que confirmou a tabela usada no projeto|
+|[MSD / Merck Veterinary Manual — Nutritional Requirements of Small Animals](https://www.msdvetmanual.com/management-and-nutrition/nutrition-small-animals/nutritional-requirements-of-small-animals)|`RER = 70 × kg^0.75`, variante linear `30 × kg + 70` restrita a 2–45 kg, e a tabela completa de fatores de MER por espécie e perfil|**verificado em 2026-08-15**, e conferido de novo na sessão do [ADR 0003](./adr/0003-peso-ideal-e-perfis-suportados.md). As linhas de manutenção vivem sob "Healthy adult dogs" e "Healthy adult cats" — *obesity prone* é categoria de animal saudável. Não define fator para perda de peso nem para idoso, e registra que as diretrizes atuais não reconhecem mudança nutricional por idade em idoso saudável|
+|[Ed Carlson — *Nutrition Math 101*, Today's Veterinary Nurse, Summer 2023](https://todaysveterinarynurse.com/nutrition/veterinary-nutrition-math/)|Tabela 1, com os coeficientes diários de energia para cão e gato; as três formas de RER e o limite de 2–45 kg da variante linear|**verificado em 2026-08-15.** Segunda fonte independente dos seis fatores de manutenção, com valores idênticos aos do MSD. Traz também perda de peso (cão 1.0, gato 0.8) e trabalho (cão leve 2, pesado 4 a 8), ambos fora de escopo — ver ADR 0003|
+|Gross KL, Yamka RM, Khoo C, et al. Macronutrients. In: Hand MS, Thatcher CD, Remillard RL, et al., eds. *Small Animal Clinical Nutrition*, 5ª ed.|fonte primária por trás da Tabela 1 do Carlson|**não consultado diretamente.** É livro, não página web. Fica registrado como a origem declarada dos fatores, para quem precisar chegar na fonte de verdade|
 |[WSAVA — Global Nutrition Guidelines](https://wsava.org/global-guidelines/global-nutrition-guidelines/)|diretrizes globais de avaliação nutricional, escore de condição corporal, cálculo de RER|citado no material de origem, não verificado nesta sessão|
 |[FEDIAF — Nutritional Guidelines](https://europeanpetfood.org/self-regulation/nutritional-guidelines/)|equações de energia metabolizável e fatores de atividade adotados na indústria europeia|citado no material de origem, não verificado nesta sessão. Ver [ADR 0002](./adr/0002-equacao-energetica-rer-mer.md) — a família de equações da FEDIAF diverge da adotada|
 |[UK Pet Food — Calculating how much to feed](https://www.ukpetfood.org/spotlight-on-obesity/calculating-how-much-to-feed.html)|conversão de necessidade calórica para quantidade de alimento|não verificado nesta sessão|
@@ -23,6 +25,14 @@ Antes de alterar qualquer fórmula ou fator, confira aqui de onde ele veio.
 - [Prontupet — Calculadora de calorias](https://www.prontupet.com/calorias/index.html)
 - [Royal Canin Portal Vet — consumo de alimento na vida adulta](https://portalvet.royalcanin.com.br/saude-e-nutricao/nutricao/royal-canin-responde-quantidade-de-alimento-consumida-pelo-animal-diminui-na-vida-adulta/)
 - [Vetsmart — ABC da nutrição](https://www.vetsmart.com.br/cg/estudo/13814/artigo-abc-da-nutricao)
+
+### Sobre obesidade e peso ideal
+
+Sustentariam a regra de calcular sobre o peso ideal, que o [ADR 0003](./adr/0003-peso-ideal-e-perfis-suportados.md) discute. **Nenhum foi verificado**: PremieRvet e Royal Canin devolveram HTTP 403 na tentativa de leitura em 2026-08-15, e o MSD não trata do assunto. Quem for reabrir perda de peso começa por aqui.
+
+- [PremieRvet — Obesidade em cães e gatos: causas, diagnóstico e tratamento](https://premiervet.com.br/artigos/obesidade-em-caes-e-gatos-causas-diagnostico-e-tratamento/)
+- [Royal Canin Portal Vet — Tratamento da obesidade em cães e gatos](https://portalvet.royalcanin.com.br/saude-e-nutricao/controle-de-peso/tratamento-da-obesidade-em-caes-e-gatos/)
+- [Vetsmart — Manual de obesidade canina e felina](https://vetsmart.com.br/cg/estudo/13145/manual-de-obesidade-canina-e-felina)
 
 ## Práticas de desenvolvimento agêntico
 

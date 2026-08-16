@@ -7,7 +7,9 @@ Este é o documento vivo do projeto: quando uma decisão nova sobrevive a uma se
 
 O scaffold existe e os cinco comandos abaixo rodam. `src/domain/` está implementado e testado, cobrindo os critérios de aceite 1 a 8 de `docs/prd.md`.
 
-O que ainda não existe: a UI e os critérios 9 a 12. `src/App.tsx` é uma casca, `src/components/` ainda não foi criado e não há CI. A "Estrutura" abaixo já descreve `src/domain/`; `components/` continua sendo alvo, não descrição.
+O que ainda não existe: a UI e os critérios 9 a 15. `src/App.tsx` é uma casca, `src/components/` ainda não foi criado e não há CI. A "Estrutura" abaixo já descreve `src/domain/`; `components/` continua sendo alvo, não descrição.
+
+Antes de escrever a UI, leia o [ADR 0003](./docs/adr/0003-peso-ideal-e-perfis-suportados.md). Ele decide que o peso pedido é o **peso ideal** e fixa três textos de tela que não são opcionais.
 
 ## O projeto
 
