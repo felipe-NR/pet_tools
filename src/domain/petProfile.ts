@@ -1,0 +1,79 @@
+/**
+ * Espécies e perfis suportados, e o fator de manutenção de cada combinação.
+ *
+ * Esta é a fonte única dos seis fatores dentro do código. Nenhum componente,
+ * teste ou texto de UI pode repetir esses números — ver AGENTS.md > Domínio.
+ */
+
+/** Valores aceitos em docs/dominio-nutricional.md > Validação de entrada. */
+export type Species = 'dog' | 'cat';
+
+/**
+ * Os três perfis de adulto suportados no MVP. Filhote, gestante, lactante,
+ * idoso e animal doente **não** são perfis: estão fora de escopo por decisão
+ * registrada em docs/prd.md, e a aplicação avisa em vez de calcular.
+ */
+export type PetProfile = 'neutered' | 'intact' | 'obesityProne';
+
+/**
+ * Fatores de MER = RER × fator, de docs/dominio-nutricional.md > Passo 2,
+ * confirmados no MSD/Merck Veterinary Manual. Ver ADR 0002.
+ *
+ * O material que originou o projeto trazia "propenso à obesidade / idoso: 1.4".
+ * O MSD confirma 1.4 para propenso à obesidade mas não define fator para
+ * geriátrico, então a fusão dos dois não foi adotada.
+ */
+type MaintenanceEnergyFactorTable = Readonly<Record<Species, Readonly<Record<PetProfile, number>>>>;
+
+const MAINTENANCE_ENERGY_FACTORS: MaintenanceEnergyFactorTable = {
+  dog: { neutered: 1.6, intact: 1.8, obesityProne: 1.4 },
+  cat: { neutered: 1.2, intact: 1.4, obesityProne: 1.0 },
+};
+
+/** Ordem de exibição dos perfis. Fixa, para a UI não depender de Object.keys. */
+const PROFILE_DISPLAY_ORDER: readonly PetProfile[] = ['neutered', 'intact', 'obesityProne'];
+
+const SPECIES_LABELS: Readonly<Record<Species, string>> = {
+  dog: 'cão',
+  cat: 'gato',
+};
+
+/**
+ * Devolve o fator de manutenção da combinação espécie + perfil.
+ *
+ * @example
+ * maintenanceEnergyFactorFor('dog', 'neutered'); // 1.6
+ */
+export function maintenanceEnergyFactorFor(species: Species, profile: PetProfile): number {
+  return MAINTENANCE_ENERGY_FACTORS[species][profile];
+}
+
+/**
+ * Perfis selecionáveis para uma espécie, na ordem de exibição.
+ *
+ * Hoje as duas espécies suportam os mesmos três perfis, mas a UI pergunta em
+ * vez de assumir: é o que sustenta o critério 9 de docs/prd.md se a tabela
+ * mudar.
+ *
+ * @example
+ * supportedProfilesFor('cat'); // ['neutered', 'intact', 'obesityProne']
+ */
+export function supportedProfilesFor(species: Species): readonly PetProfile[] {
+  const factorsForSpecies = MAINTENANCE_ENERGY_FACTORS[species];
+  return PROFILE_DISPLAY_ORDER.filter((profile) => profile in factorsForSpecies);
+}
+
+/** Narrowing de valor vindo do formulário, onde o tipo é realmente desconhecido. */
+export function isSpecies(value: unknown): value is Species {
+  return value === 'dog' || value === 'cat';
+}
+
+/** Idem para o perfil. Qualquer valor fora da tabela é rejeitado. */
+export function isPetProfile(value: unknown): value is PetProfile {
+  return PROFILE_DISPLAY_ORDER.some((profile) => profile === value);
+}
+
+/** Rótulo em português da espécie, usado nas mensagens de validação. */
+export function speciesLabelFor(species: Species): string {
+  return SPECIES_LABELS[species];
+}
