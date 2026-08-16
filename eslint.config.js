@@ -18,8 +18,8 @@ export default tseslint.config(
       },
     },
     rules: {
-      // AGENTS.md > O que nao fazer: nao silenciar erro de tipo com any, as
-      // ou @ts-ignore. E AGENTS.md > Estilo: nada de funcao sem tipo de retorno.
+      // AGENTS.md > O que não fazer: não silenciar erro de tipo com any, as
+      // ou @ts-ignore. E AGENTS.md > Estilo: nada de função sem tipo de retorno.
       '@typescript-eslint/no-explicit-any': 'error',
       '@typescript-eslint/explicit-function-return-type': 'error',
       '@typescript-eslint/consistent-type-imports': 'error',
@@ -29,8 +29,8 @@ export default tseslint.config(
   {
     files: ['src/domain/**/*.ts'],
     rules: {
-      // AGENTS.md > Estrutura: src/domain/ nao conhece React nem DOM. A regra
-      // existe para o motor de calculo ser testavel sem renderizar nada.
+      // AGENTS.md > Estrutura: src/domain/ não conhece React nem DOM. A regra
+      // existe para o motor de cálculo ser testável sem renderizar nada.
       'no-restricted-imports': ['error', { patterns: ['react', 'react-dom', 'react/*'] }],
       'no-restricted-globals': [
         'error',

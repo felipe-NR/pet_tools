@@ -1,6 +1,6 @@
 /**
- * Casca da aplicacao. O formulario e o resultado entram na branch de UI, que
- * cobre os criterios 9 a 12 de docs/prd.md. Esta branch entrega o scaffold e
+ * Casca da aplicação. O formulário e o resultado entram na branch de UI, que
+ * cobre os critérios 9 a 12 de docs/prd.md. Esta branch entrega o scaffold e
  * src/domain/.
  */
 export function App(): React.JSX.Element {

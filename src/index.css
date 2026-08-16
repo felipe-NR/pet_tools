@@ -17,7 +17,7 @@
 
 body {
   margin: 0;
-  /* docs/prd.md criterio 11: a tela funciona em viewport de 360 px. */
+  /* docs/prd.md critério 11: a tela funciona em viewport de 360 px. */
   min-width: 320px;
   padding: 1rem;
 }
