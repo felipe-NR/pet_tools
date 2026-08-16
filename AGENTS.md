@@ -15,9 +15,9 @@ Rationale in `docs/adr/0004-ingles-no-codigo-copy-em-portugues.md`.
 
 ## Current state
 
-The scaffold, domain, and single-screen calculator UI exist. Automated tests cover acceptance criteria 1 to 15 of `docs/prd.md`; `src/domain/` retains 100% line and branch coverage.
+The scaffold, domain, single-screen calculator UI, CI, and static hosting exist. Automated tests cover acceptance criteria 1 to 15 of `docs/prd.md`; `src/domain/` retains 100% line and branch coverage.
 
-What does not exist yet: CI and static hosting. The release gate remains manual until those decisions are made.
+GitHub Actions runs the full release gate on pull requests and pushes to `master`. A successful `master` build is published to GitHub Pages at `https://felipe-nr.github.io/pet_tools/`. See ADR 0005.
 
 Before writing the UI, read `docs/adr/0003-peso-ideal-e-perfis-suportados.md`. It decides that the weight asked for is the **ideal weight** and pins three on-screen texts that are not optional.
 

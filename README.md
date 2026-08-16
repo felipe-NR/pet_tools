@@ -1,5 +1,7 @@
 # pet_tools
 
+[![CI and deploy](https://github.com/felipe-NR/pet_tools/actions/workflows/ci-and-deploy.yml/badge.svg)](https://github.com/felipe-NR/pet_tools/actions/workflows/ci-and-deploy.yml)
+
 A calculator that turns a pet's weight and the metabolizable energy printed on the food label into **grams per day**.
 
 Labels give broad weight bands that ignore neutering and activity level. Doing the arithmetic properly needs a fractional exponent, which in practice rules out anyone unwilling to hunt down a scientific calculator. This tool does the arithmetic and shows the steps.
@@ -18,9 +20,9 @@ The product copy the user reads is Portuguese too, and lives in `src/copy/`. See
 
 ## Status
 
-The calculation engine and responsive single-screen interface are implemented. Automated tests cover all 15 acceptance criteria in the PRD, and `src/domain/` has 100% line and branch coverage.
+The calculation engine and responsive single-screen interface are implemented. Automated tests cover all 15 acceptance criteria in the PRD, and `src/domain/` has 100% line and branch coverage. GitHub Actions runs lint, tests, and the production build before publishing `master` to GitHub Pages.
 
-Not configured yet: CI and static hosting.
+Live application: [felipe-nr.github.io/pet_tools](https://felipe-nr.github.io/pet_tools/)
 
 ## Commands
 
@@ -45,7 +47,7 @@ Not configured yet: CI and static hosting.
 
 ## Stack
 
-Vite + React + TypeScript, no backend. Rationale in [ADR 0001](./docs/adr/0001-stack-e-arquitetura.md).
+Vite + React + TypeScript, no backend. Rationale in [ADR 0001](./docs/adr/0001-stack-e-arquitetura.md). CI and static hosting are documented in [ADR 0005](./docs/adr/0005-github-actions-e-github-pages.md).
 
 ## License
 
