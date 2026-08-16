@@ -1,0 +1,23 @@
+:root {
+  font-family:
+    system-ui,
+    -apple-system,
+    'Segoe UI',
+    Roboto,
+    sans-serif;
+  line-height: 1.5;
+  color-scheme: light dark;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  /* docs/prd.md acceptance criterion 11: works at a 360 px viewport. */
+  min-width: 320px;
+  padding: 1rem;
+}

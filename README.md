@@ -1,32 +1,52 @@
 # pet_tools
 
-Calculadora que converte o peso do pet e a energia metabolizável do rótulo da ração em **gramas por dia**.
+A calculator that turns a pet's weight and the metabolizable energy printed on the food label into **grams per day**.
 
-O rótulo traz faixas de peso largas que ignoram castração e nível de atividade. Fazer a conta certa exige potência fracionária, o que na prática afasta quem não vai atrás de uma calculadora científica. Esta ferramenta faz a conta e mostra os passos.
+Labels give broad weight bands that ignore neutering and activity level. Doing the arithmetic properly needs a fractional exponent, which in practice rules out anyone unwilling to hunt down a scientific calculator. This tool does the arithmetic and shows the steps.
 
-Cães e gatos adultos. Roda inteiramente no navegador — nenhum dado é coletado, enviado ou armazenado.
+Adult dogs and cats. Runs entirely in the browser — no data is collected, transmitted or stored.
 
-> O resultado é estimativa populacional. Serve como ponto de partida, não como prescrição: pese a porção, acompanhe peso e condição corporal e ajuste com orientação veterinária.
+> The result is a population estimate. Use it as a starting point, not a prescription: weigh the portion, follow weight and body condition, and adjust with veterinary guidance.
 
-## Estado
+## Language
 
-Em definição. Só a documentação existe — ainda não há código.
+Everything outside `docs/` is written in English: code, comments, tests, these files and commit messages.
 
-## Documentação
+`docs/` stays in Portuguese — it holds the nutritional domain, the PRD, the references and the ADRs, written against sources that are already Portuguese.
 
-|arquivo|conteúdo|
+The product copy the user reads is Portuguese too, and lives in `src/copy/`. See [ADR 0004](./docs/adr/0004-ingles-no-codigo-copy-em-portugues.md).
+
+## Status
+
+Scaffold and calculation engine done. `src/domain/` covers acceptance criteria 1 to 8 of the PRD, with 100% line and branch coverage.
+
+Not built yet: the interface, criteria 9 to 15.
+
+## Commands
+
+|command|what it does|
 |-|-|
-|[AGENTS.md](./AGENTS.md)|regras de código, testes e processo. Ponto de partida para qualquer agente de IA|
-|[CLAUDE.md](./CLAUDE.md)|o que é específico do Claude Code. Aponta para o AGENTS.md|
-|[docs/prd.md](./docs/prd.md)|escopo, fora de escopo, critérios de aceite|
-|[docs/dominio-nutricional.md](./docs/dominio-nutricional.md)|fórmulas, fatores, validações, armadilhas de rótulo|
-|[docs/referencias.md](./docs/referencias.md)|fontes veterinárias e de processo|
-|[docs/adr/](./docs/adr/)|decisões de arquitetura e de domínio|
+|`npm run dev`|starts the development server|
+|`npm test`|runs the whole suite once, headless, with coverage|
+|`npm run test:watch`|watch mode|
+|`npm run lint`|ESLint plus type checking|
+|`npm run build`|production build|
+
+## Documentation
+
+|file|contents|
+|-|-|
+|[AGENTS.md](./AGENTS.md)|code, testing and process rules. Starting point for any AI agent|
+|[CLAUDE.md](./CLAUDE.md)|what is specific to Claude Code. Points at AGENTS.md|
+|[docs/prd.md](./docs/prd.md)|scope, out of scope, acceptance criteria|
+|[docs/dominio-nutricional.md](./docs/dominio-nutricional.md)|formulas, factors, validation, label pitfalls|
+|[docs/referencias.md](./docs/referencias.md)|veterinary and process sources|
+|[docs/adr/](./docs/adr/)|architecture and domain decisions|
 
 ## Stack
 
-Vite + React + TypeScript, sem backend. Justificativa no [ADR 0001](./docs/adr/0001-stack-e-arquitetura.md).
+Vite + React + TypeScript, no backend. Rationale in [ADR 0001](./docs/adr/0001-stack-e-arquitetura.md).
 
-## Licença
+## License
 
-MIT. Ver [LICENSE](./LICENSE).
+MIT. See [LICENSE](./LICENSE).

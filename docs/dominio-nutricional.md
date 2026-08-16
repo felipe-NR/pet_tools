@@ -31,7 +31,9 @@ Existe uma variante linear na literatura, `RER = 30 × peso_kg + 70`, restrita a
 MER = RER × fator_do_perfil
 ```
 
-Fatores confirmados no MSD/Merck Veterinary Manual:
+Fatores confirmados em duas fontes independentes, com valores idênticos: o MSD/Merck Veterinary Manual e a Tabela 1 de Carlson (*Nutrition Math 101*, Today's Veterinary Nurse, Summer 2023), que por sua vez cita o *Small Animal Clinical Nutrition*, 5ª ed. Ver [referencias.md](./referencias.md).
+
+No MSD estes seis valem sob os títulos "Healthy adult dogs" e "Healthy adult cats". **Propenso à obesidade é categoria de animal saudável** — do animal que tende a engordar, não do que já está acima do peso. Ver [ADR 0003](./adr/0003-peso-ideal-e-perfis-suportados.md).
 
 |espécie|perfil|fator|
 |-|-|-|
@@ -44,7 +46,9 @@ Fatores confirmados no MSD/Merck Veterinary Manual:
 
 Estes seis são os únicos perfis suportados. A tabela é a fonte única — não replique esses números em componente, teste ou texto de UI.
 
-Nota de proveniência: o material que originou o projeto trazia "cão propenso à obesidade / idoso: 1.4". O MSD confirma 1.4 para propenso à obesidade, mas **não** define fator para geriátrico. Idoso não é perfil suportado; a fusão dos dois no material original não foi adotada.
+Nota de proveniência: o material que originou o projeto trazia "cão propenso à obesidade / idoso: 1.4". As duas fontes confirmam 1.4 para propenso à obesidade, e **nenhuma** define fator para geriátrico — o MSD ainda registra que as diretrizes atuais não reconhecem mudança nutricional por idade em idoso saudável.
+
+Idoso continua **não sendo um perfil**: não há linha na tabela nem fator próprio, e inventar um violaria a regra 2 de `AGENTS.md > Domínio`. O que o [ADR 0003](./adr/0003-peso-ideal-e-perfis-suportados.md) decidiu é outra coisa — para onde a interface manda o usuário: o tutor de animal idoso é orientado a escolher "propenso à obesidade". É decisão de produto, conservadora e sem respaldo em fonte, e está registrada como tal no ADR.
 
 ## Passo 3 — gramas por dia
 
@@ -113,22 +117,39 @@ Fora da faixa típica de ração seca (2 500 a 5 000 kcal/kg) o cálculo prosseg
 
 **EM não é o mesmo que "níveis de garantia".** O painel de garantia traz proteína, gordura, fibra e umidade — nenhum deles é energia metabolizável. A EM costuma vir em nota separada. Se o rótulo não trouxer EM, o cálculo não pode ser feito; a UI precisa explicar isso em vez de aceitar um chute.
 
-**Peso alvo contra peso atual.** Para animal acima do peso, a literatura calcula sobre o peso *ideal*, não o atual. O MVP usa o peso informado e avisa. Suportar peso alvo exige ADR.
+**Peso alvo contra peso atual.** Resolvido pelo [ADR 0003](./adr/0003-peso-ideal-e-perfis-suportados.md): **o peso informado é o peso ideal**, não o atual. Para animal já no peso saudável os dois coincidem e nada muda.
+
+O enquadramento se apoia no que a fonte diz de si mesma — os fatores descrevem animal saudável, então aplicá-los ao peso ideal é usá-los como definidos. Fora isso, as fontes não fecham: o MSD não trata do assunto e o exemplo trabalhado do Carlson usa o peso atual.
+
+A interface precisa dizer três coisas, e nenhuma é opcional:
+
+- o peso ideal se define com veterinário, não se estima em casa;
+- servindo a quantidade calculada, o animal tende ao peso informado — **sem prazo prometido**;
+- animal visivelmente acima do peso é caso de acompanhamento veterinário. Em gato isso é mais sério: restrição calórica sem supervisão associa-se a lipidose hepática.
 
 ## Fora de escopo
 
 Não implemente. Estão aqui para que ninguém invente um número quando o assunto aparecer.
 
-|situação|fator na literatura|
-|-|-|
-|filhote até 4 meses|3.0 × RER|
-|filhote acima de 4 meses|2.0 × RER|
-|filhote de gato|2.5 × RER|
-|gestação e lactação|acima de 2.0 × RER, muito variável|
-|perda de peso supervisionada|abaixo do fator de manutenção|
-|animal doente, hospitalizado ou em recuperação|caso a caso|
+|situação|fator na literatura|fonte|
+|-|-|-|
+|filhote até 4 meses|3.0 × RER|MSD e Carlson|
+|filhote acima de 4 meses|2.0 × RER|MSD e Carlson|
+|filhote de gato|2.5 × RER|MSD e Carlson|
+|gestação e lactação|acima de 2.0 × RER, muito variável|material de origem; nenhuma das duas fontes traz linha|
+|perda de peso, cão|1.0 × RER **sobre o peso ideal**|Carlson|
+|perda de peso, gato|0.8 × RER **sobre o peso ideal**|Carlson|
+|cão de trabalho leve|2.0 × RER|Carlson|
+|cão de trabalho pesado|4 a 8 × RER — faixa, não fator|Carlson|
+|animal doente, hospitalizado ou em recuperação|caso a caso|—|
 
 Todos exigem acompanhamento veterinário. Quando o usuário selecionar um caso destes, a aplicação **não calcula** — informa e encaminha ao veterinário.
+
+Três observações sobre esta tabela, para ninguém a ler como lista de pendências:
+
+- **Perda de peso ficou de fora por decisão**, não por falta de número. Chegar ao peso ideal exige escore de condição corporal, que está fora de escopo, e emagrecimento é procedimento supervisionado. Ver [ADR 0003](./adr/0003-peso-ideal-e-perfis-suportados.md).
+- **Cão de trabalho ficou de fora por público-alvo.** E "4 a 8" é faixa: escolher um ponto dentro dela seria inventar número. O material de origem ainda divergia do Carlson aqui, trazendo "2,0 a 3,0" para cão de trabalho.
+- **Nada nesta tabela entra em `src/domain/`** sem ADR novo e sem fonte primária conferida.
 
 ## Limite do produto
 

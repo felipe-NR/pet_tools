@@ -1,116 +1,141 @@
 # AGENTS.md
 
-Regras operacionais para agentes de IA neste repositório. Leia antes de qualquer edição.
-Este é o documento vivo do projeto: quando uma decisão nova sobrevive a uma sessão, ela é registrada aqui ou em `docs/`.
+Operating rules for AI agents in this repository. Read before any edit.
+This is the project's living document: when a new decision survives a session, it is recorded here or in `docs/`.
 
-## Estado atual
+## Language
 
-Só existe documentação. Não há `package.json`, `src/` nem CI ainda.
-As seções "Comandos" e "Estrutura" abaixo são o **contrato que o scaffold deve satisfazer**, não descrição do que existe.
+Everything outside `docs/` is written in **English**: code, comments, docstrings, test names, exception messages, this file, `CLAUDE.md`, `README.md` and commit messages.
 
-## O projeto
+`docs/` is written in **Portuguese**. It holds the nutritional domain, the PRD, the references and the ADRs, written against sources that are already Portuguese. Section names from `docs/` are quoted in Portuguese everywhere, including here.
 
-Calculadora web que converte peso do pet + perfil + energia metabolizável do rótulo da ração em **gramas por dia**.
-Uma ferramenta só. Sem backend, sem banco, sem login, sem coleta de dados pessoais — todo cálculo roda no navegador.
+The **product copy** — the text the user reads on screen — is Portuguese, and lives in `src/copy/` and in `index.html`. Nowhere else. `src/domain/` never builds a sentence: validation reports a `FieldViolation` as data and the copy layer turns it into Portuguese. ESLint enforces that the domain does not import the copy layer.
 
-O domínio inteiro (fórmulas, fatores, faixas de validação, avisos clínicos) está em `docs/dominio-nutricional.md`. Leia esse arquivo antes de mexer em qualquer coisa dentro de `src/domain/`.
+Rationale in `docs/adr/0004-ingles-no-codigo-copy-em-portugues.md`.
+
+## Current state
+
+The scaffold exists and the five commands below run. `src/domain/` is implemented and tested, covering acceptance criteria 1 to 8 of `docs/prd.md`.
+
+What does not exist yet: the UI and criteria 9 to 15. `src/App.tsx` is a shell, `src/components/` has not been created and there is no CI. The "Structure" section below already describes `src/domain/` and `src/copy/`; `components/` is still a target, not a description.
+
+Before writing the UI, read `docs/adr/0003-peso-ideal-e-perfis-suportados.md`. It decides that the weight asked for is the **ideal weight** and pins three on-screen texts that are not optional.
+
+## The project
+
+A web calculator that turns pet weight + profile + the metabolizable energy on the food label into **grams per day**.
+One tool. No backend, no database, no login, no personal data collection — every calculation runs in the browser.
+
+The whole domain (formulas, factors, validation ranges, clinical warnings) lives in `docs/dominio-nutricional.md`. Read that file before touching anything inside `src/domain/`.
 
 ## Stack
 
 - Vite + React + TypeScript (`strict: true`)
-- Vitest para testes, Testing Library para componentes
+- Vitest for tests, Testing Library for components
 - ESLint + Prettier
-- Sem framework de UI pesado. CSS Modules ou CSS puro.
+- No heavy UI framework. CSS Modules: one `.module.css` next to each component. ADR 0001 left the choice between CSS Modules and plain CSS open; CSS Modules won for per-component scoping without relying on naming conventions, and with no new dependency — Vite already supports it.
 
-Justificativa em `docs/adr/0001-stack-e-arquitetura.md`. Trocar qualquer item acima exige um ADR novo.
+Rationale in `docs/adr/0001-stack-e-arquitetura.md`. Replacing any item above requires a new ADR.
 
-## Comandos
+## Commands
 
-Todo comando roda sem setup humano, sem credencial e sem rede.
+Every command runs with no human setup, no credentials and no network.
 
-|comando|o que faz|
+|command|what it does|
 |-|-|
-|`npm run dev`|sobe o servidor de desenvolvimento|
-|`npm test`|roda a suíte inteira, uma vez, headless|
-|`npm run test:watch`|modo watch|
-|`npm run lint`|ESLint + checagem de tipos|
-|`npm run build`|build de produção|
+|`npm run dev`|starts the development server|
+|`npm test`|runs the whole suite once, headless, with coverage thresholds enforced|
+|`npm run test:watch`|watch mode|
+|`npm run lint`|ESLint + type checking|
+|`npm run build`|production build|
 
-Antes de declarar qualquer tarefa concluída: `npm run lint && npm test && npm run build`. Os três passam ou a tarefa não acabou.
+Before declaring any task done: `npm run lint && npm test && npm run build`. All three pass or the task is not finished.
 
-## Estrutura
+## Structure
 
 ```
 src/
-  domain/       cálculo puro. Zero import de React, DOM, browser ou I/O.
-  components/   componentes React. Um componente por arquivo.
+  domain/       pure calculation. Zero imports of React, DOM, browser, I/O or copy.
+  copy/         Portuguese product text. The only place in src/ that writes Portuguese.
+  components/   React components. One component per file.
   App.tsx
   main.tsx
 docs/
-  prd.md                    escopo, fora-de-escopo, critérios de aceite
-  dominio-nutricional.md    fórmulas, fatores, validações, avisos
-  referencias.md            fontes primárias
-  adr/                      decisões de engenharia, numeradas
+  prd.md                    scope, out of scope, acceptance criteria
+  dominio-nutricional.md    formulas, factors, validation, warnings
+  referencias.md            primary sources
+  adr/                      numbered engineering decisions
 ```
 
-Testes ficam ao lado do código: `rer.ts` → `rer.test.ts`.
+Tests sit next to the code: `rer.ts` → `rer.test.ts`.
 
-`src/domain/` não conhece React. Se um arquivo em `domain/` importar React, está errado — a regra existe para que o motor de cálculo seja testável sem renderizar nada e reaproveitável se um dia houver CLI ou API.
+`src/domain/` knows nothing about React and nothing about Portuguese. If a file in `domain/` imports React or writes a user-facing sentence, it is wrong — the rule exists so the calculation engine is testable without rendering anything and reusable if a CLI or an API ever shows up.
 
-## Estilo de código
+Dependencies run one way: `copy/` and `components/` import from `domain/`, never the reverse.
 
-- Funções: 4–20 linhas. Passou disso, divide.
-- Arquivos: abaixo de 500 linhas, mire 200–300. Passou disso, divide por responsabilidade.
-- Uma coisa por função, uma responsabilidade por módulo.
-- Nomes específicos e únicos. Proibido `data`, `info`, `handler`, `manager`, `service`, `utils`, `helper`. Prefira nomes que retornem menos de 5 hits no grep: `calculateRestingEnergyRequirement`, `maintenanceEnergyFactorFor`, `DailyPortionResult`.
-- Tipos explícitos. Nada de `any`, nada de `object`, nada de função sem tipo de retorno. `unknown` + narrowing quando o tipo for realmente desconhecido.
-- Sem duplicação. Lógica repetida vira função. Um agente que edita uma cópia e esquece as outras produz bug silencioso.
-- Early return em vez de if aninhado. Máximo 2 níveis de indentação.
-- Mensagem de erro carrega o valor ofensivo e o formato esperado: `Peso inválido: recebido -3, esperado número entre 0.5 e 100 kg`. Nunca `Invalid input`.
-- Dependências entram por parâmetro ou props, não por import global de singleton.
+## Code style
 
-## Comentários
+- Functions: 4–20 lines. Longer than that, split.
+- Files: under 500 lines, aim for 200–300. Longer than that, split by responsibility.
+- One thing per function, one responsibility per module.
+- Specific, unique names. Banned: `data`, `info`, `handler`, `manager`, `service`, `utils`, `helper`. Prefer names that return fewer than 5 grep hits: `calculateRestingEnergyRequirement`, `maintenanceEnergyFactorFor`, `DailyPortionResult`.
+- Explicit types. No `any`, no `object`, no function without a return type. `unknown` + narrowing when the type is genuinely unknown.
+- No duplication. Repeated logic becomes a function. An agent that edits one copy and forgets the others produces a silent bug.
+- Early return instead of nested ifs. At most 2 levels of indentation.
+- Dependencies arrive as parameters or props, never as a global singleton import.
 
-- Escreva o **porquê**, não o **o quê**. `// i++ incrementa i` é lixo; `// FEDIAF usa expoente 0.75, não 0.67 — ver ADR 0002` é contexto.
-- Comentário de proveniência é obrigatório em qualquer constante numérica do domínio: de onde veio o número, qual fonte, qual ADR.
-- Docstring em função pública: intenção + um exemplo de uso.
-- Não apague comentários existentes durante refactor. Eles são o contexto da próxima sessão.
+### Error messages
 
-## Testes
+Two kinds, and they do not mix:
 
-TDD é obrigatório aqui, não é preferência. Teste primeiro, implementação depois.
+- **Developer-facing exceptions**, in English, carry the offending value and the expectation: `Invalid weight for the RER calculation: received -3, expected a positive number in kg`. Never `Invalid input`. Reaching one of these means a caller broke a contract.
+- **User-facing messages** are never built in `src/domain/`. Validation returns a `FieldViolation` — reason, received value, minimum, maximum — and `src/copy/` writes the Portuguese sentence, carrying the offending value and the expected format: `Peso inválido: recebido -3, esperado número entre 0.5 e 100 kg para cão`. When the value did not parse at all, the message also names the format, because a rejected `12,5` sits inside the accepted range and quoting only the range would tell the user to do what they just did.
 
-- Toda função nova ganha teste. Todo bug corrigido ganha teste de regressão que falha antes do fix.
-- Alvo: 80% de cobertura de linhas, 70% de branches. Mais linhas de teste que de código.
-- Testes F.I.R.S.T.: rápidos, independentes, repetíveis, auto-validáveis, escritos junto.
-- Todo teste roda headless, sem seed manual e sem configuração ausente.
-- `src/domain/` merece teste de valor exato, não `expect(x).toBeGreaterThan(0)`. Os exemplos calculados à mão estão em `docs/dominio-nutricional.md` — use aqueles números como casos.
-- Teste os limites: peso zero, peso negativo, peso fora de faixa, EM ausente, EM absurda, string onde se espera número.
+## Comments
 
-## Domínio: regras que não se negociam
+- Write the **why**, not the **what**. `// i++ increments i` is noise; `// FEDIAF uses exponent 0.75, not 0.67 — see ADR 0002` is context.
+- A provenance comment is mandatory on any numeric domain constant: where the number came from, which source, which ADR.
+- Docstring on a public function: intent + one usage example.
+- Do not delete existing comments during a refactor. They are the next session's context.
 
-1. **Nunca altere uma fórmula, fator ou faixa de validação sem antes ler `docs/dominio-nutricional.md` e abrir um ADR.** Esses números vêm de literatura veterinária, não de intuição.
-2. **Nunca invente um fator** para um perfil que não está na tabela. Se o perfil não existe, ou ele não é suportado no MVP, ou vira ADR com fonte.
-3. Filhotes, gestantes, lactantes e animais doentes **estão fora do escopo**. A UI avisa e não calcula. Ver `docs/prd.md`.
-4. O resultado é estimativa e a interface diz isso. Nenhum texto pode sugerir que substitui avaliação veterinária.
-5. Arredonde só no fim. Valores intermediários (RER, MER) circulam com precisão total.
+## Tests
 
-## Fluxo de trabalho
+TDD is mandatory here, not a preference. Test first, implementation after.
 
-- Commits pequenos, cada um passando lint + testes + build. Nada de acumular e refatorar depois.
-- Uma responsabilidade por commit. Feature, fix e refactor não andam juntos.
-- Refatore continuamente. Código empilhado sem poda vira monólito.
-- Antes de implementar algo não-trivial, apresente o plano e espere aprovação.
-- Se faltar contexto de domínio ou de decisão, pergunte. Não presuma e siga.
+- Every new function gets a test. Every fixed bug gets a regression test that fails before the fix.
+- Target: 80% line coverage, 70% branch. More lines of test than of code.
+- F.I.R.S.T. tests: fast, independent, repeatable, self-validating, written alongside.
+- Every test runs headless, with no manual seeding and no missing configuration.
+- `src/domain/` deserves exact-value tests, not `expect(x).toBeGreaterThan(0)`. The hand-calculated examples live in `docs/dominio-nutricional.md` — use those numbers as cases.
+- Test the boundaries: zero weight, negative weight, weight out of range, missing ME, absurd ME, a string where a number is expected.
+- Copy is tested against violations produced by the real validators, not hand-written literals. That is what keeps the text and the ranges from drifting apart.
 
-## O que não fazer
+## Domain: non-negotiable rules
 
-- Não adicione dependência sem justificar. Toda dependência nova é superfície de ataque e peso de bundle.
-- Não crie backend, banco, autenticação, analytics ou telemetria. É decisão arquitetural registrada, não esquecimento.
-- Não colete, envie ou persista dado pessoal ou de saúde do animal fora do navegador.
-- Não generalize para "plataforma de ferramentas" antes de existir uma segunda ferramenta real.
-- Não silencie erro de tipo com `any`, `as` ou `@ts-ignore`.
-- Não marque tarefa como pronta com teste falhando, teste pulado ou lint vermelho. Reporte o que quebrou.
+1. **Never change a formula, factor or validation range without first reading `docs/dominio-nutricional.md` and opening an ADR.** These numbers come from veterinary literature, not intuition.
+2. **Never invent a factor** for a profile that is not in the table. If the profile does not exist, either it is unsupported in the MVP or it becomes an ADR with a source.
+3. Puppies, pregnant, lactating and sick animals are **out of scope**. The UI warns and does not calculate. See `docs/prd.md`.
+4. The result is an estimate and the interface says so. No text may suggest it replaces veterinary assessment.
+5. Round only at the end. Intermediate values (RER, MER) travel at full precision.
+6. The weight asked for is the **ideal weight**, not the current one. See ADR 0003.
+
+## Workflow
+
+- Small commits, each passing lint + tests + build. Do not pile up and refactor later.
+- One responsibility per commit. Feature, fix and refactor do not travel together.
+- Refactor continuously. Code stacked without pruning becomes a monolith.
+- Before implementing anything non-trivial, present the plan and wait for approval.
+- If domain or decision context is missing, ask. Do not assume and carry on.
+
+## What not to do
+
+- Do not add a dependency without justifying it. Every new dependency is attack surface and bundle weight.
+- Do not create a backend, database, authentication, analytics or telemetry. That is a recorded architectural decision, not an oversight.
+- Do not collect, transmit or persist personal data or animal health data outside the browser.
+- Do not generalize into a "tools platform" before a second real tool exists.
+- Do not silence a type error with `any`, `as` or `@ts-ignore`.
+- Do not write Portuguese outside `docs/`, `src/copy/` and `index.html`.
+- Do not mark a task done with a failing test, a skipped test or a red lint. Report what broke.
 
 <!-- ai-memory:start -->
 ## Long-term memory (ai-memory)

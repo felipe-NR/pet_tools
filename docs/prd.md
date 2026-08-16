@@ -17,8 +17,8 @@ Não é ferramenta clínica. Veterinário tem software próprio e não é o púb
 Uma tela. O usuário informa:
 
 - espécie: cão ou gato
-- peso em kg
-- perfil: castrado, inteiro ou propenso à obesidade
+- **peso ideal** em kg — não o peso atual. Ver [ADR 0003](./adr/0003-peso-ideal-e-perfis-suportados.md)
+- perfil: castrado, inteiro ou propenso à obesidade — tutor de animal idoso escolhe propenso à obesidade
 - energia metabolizável da ração, em kcal/kg
 
 A aplicação devolve:
@@ -39,9 +39,12 @@ Decisões, não pendências. Sair de qualquer uma exige ADR.
 - múltiplas ferramentas, catálogo de tools, navegação entre elas
 - base de rações cadastradas ou leitura de rótulo por foto
 - divisão da porção em refeições, petiscos, ração úmida misturada com seca
-- cálculo sobre peso alvo em vez de peso atual
+- perfil de perda de peso, com fator reduzido e protocolo supervisionado
+- perfil de cão de trabalho
 - escore de condição corporal como entrada
 - analytics, telemetria, cookies, qualquer coleta de dado
+
+Saiu desta lista: "cálculo sobre peso alvo em vez de peso atual". O [ADR 0003](./adr/0003-peso-ideal-e-perfis-suportados.md) adotou o peso ideal como entrada, e a exclusão virou o oposto da decisão. O escore de condição corporal continua fora, e é por isso que perda de peso continua fora junto.
 
 ## Fluxo
 
@@ -68,10 +71,13 @@ Os critérios 1 a 3 são os três exemplos calculados à mão em [dominio-nutric
 10. Nenhuma requisição de rede sai da página depois do carregamento inicial.
 11. A tela funciona em viewport de 360 px de largura.
 12. O formulário é operável só por teclado, e cada campo tem label associado.
+13. O campo de peso identifica que o valor pedido é o **peso ideal**, diz que ele se define com veterinário, e explica que servir a quantidade calculada leva o animal em direção a esse peso. Nenhum texto promete prazo.
+14. Animal visivelmente acima do peso é encaminhado ao veterinário, com aviso específico para gato sobre o risco de restrição calórica sem supervisão.
+15. O perfil "propenso à obesidade" descreve animal no peso saudável que tende a engordar, e o texto orienta o tutor de animal idoso a escolhê-lo. Nenhum texto sugere que ele serve para emagrecer animal já acima do peso.
 
 ## Pronto quando
 
-- os doze critérios acima têm teste automatizado passando
+- os quinze critérios acima têm teste automatizado passando
 - `npm run lint && npm test && npm run build` passa limpo
 - cobertura em `src/domain/` acima de 90% de linhas, projeto acima de 80%
 - build estático publicado e acessível por URL
