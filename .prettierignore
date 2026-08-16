@@ -1,0 +1,8 @@
+dist/
+coverage/
+node_modules/
+package-lock.json
+
+# A documentacao e escrita a mao e as tabelas usam separador minimo.
+# Prettier aqui formata codigo, nao reflui docs.
+*.md
