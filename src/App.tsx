@@ -1,17 +1,27 @@
-import { APP_TITLE, SHELL_NOTICE } from './copy/appShell';
+import {
+  APP_EYEBROW,
+  APP_SUBTITLE,
+  APP_TITLE,
+  OUT_OF_SCOPE_NOTICE,
+  OVERWEIGHT_GUIDANCE,
+} from './copy/calculator';
+import { DailyPortionCalculator } from './components/DailyPortionCalculator';
+import styles from './App.module.css';
 
-/**
- * Application shell. The form and the result land in the UI branch, which
- * covers acceptance criteria 9 to 15 of docs/prd.md. This branch delivers the
- * scaffold and src/domain/.
- *
- * The visible text comes from src/copy/ — see ADR 0004.
- */
+/** Single-screen application shell for the daily portion calculator. */
 export function App(): React.JSX.Element {
   return (
-    <main>
-      <h1>{APP_TITLE}</h1>
-      <p>{SHELL_NOTICE}</p>
+    <main className={styles.page}>
+      <header className={styles.hero}>
+        <p className={styles.eyebrow}>{APP_EYEBROW}</p>
+        <h1>{APP_TITLE}</h1>
+        <p className={styles.subtitle}>{APP_SUBTITLE}</p>
+      </header>
+      <aside className={styles.scope}>
+        <p>{OUT_OF_SCOPE_NOTICE}</p>
+        <p>{OVERWEIGHT_GUIDANCE}</p>
+      </aside>
+      <DailyPortionCalculator />
     </main>
   );
 }
