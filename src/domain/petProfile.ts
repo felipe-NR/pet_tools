@@ -1,47 +1,48 @@
 import { describeRawValue } from './fieldValidation';
 
 /**
- * Espécies e perfis suportados, e o fator de manutenção de cada combinação.
+ * Supported species and profiles, and the maintenance factor of every
+ * combination.
  *
- * Esta é a fonte única dos seis fatores dentro do código. Nenhum componente,
- * teste ou texto de UI pode repetir esses números — ver AGENTS.md > Domínio.
+ * This is the single source of the six factors inside the code. No component,
+ * test or interface text may repeat these numbers — see AGENTS.md > Domain.
+ *
+ * Portuguese labels do not live here. They are product copy and belong to
+ * `src/copy/`, per ADR 0004.
  */
 
-/** Valores aceitos em docs/dominio-nutricional.md > Validação de entrada. */
+/** Values accepted in docs/dominio-nutricional.md > Validação de entrada. */
 export type Species = 'dog' | 'cat';
 
 /**
- * Os três perfis de adulto suportados no MVP. Filhote, gestante, lactante,
- * idoso e animal doente **não** são perfis: estão fora de escopo por decisão
- * registrada em docs/prd.md, e a aplicação avisa em vez de calcular.
+ * The three adult profiles supported by the MVP. Puppies, pregnant, lactating,
+ * senior and sick animals are **not** profiles: they are out of scope by a
+ * decision recorded in docs/prd.md, and the app warns instead of calculating.
  */
 export type PetProfile = 'neutered' | 'intact' | 'obesityProne';
 
-/**
- * Fatores de MER = RER × fator, de docs/dominio-nutricional.md > Passo 2,
- * confirmados no MSD/Merck Veterinary Manual. Ver ADR 0002.
- *
- * O material que originou o projeto trazia "propenso à obesidade / idoso: 1.4".
- * O MSD confirma 1.4 para propenso à obesidade mas não define fator para
- * geriátrico, então a fusão dos dois não foi adotada.
- */
 type MaintenanceEnergyFactorTable = Readonly<Record<Species, Readonly<Record<PetProfile, number>>>>;
 
+/**
+ * MER = RER × factor, from docs/dominio-nutricional.md > Passo 2. Confirmed in
+ * two independent sources with identical values: the MSD/Merck Veterinary
+ * Manual and Carlson's Table 1, which cites Small Animal Clinical Nutrition,
+ * 5th ed. See ADR 0002 and ADR 0003.
+ *
+ * In the MSD these rows sit under "Healthy adult dogs" and "Healthy adult
+ * cats": obesity prone describes a **healthy** animal that tends to gain
+ * weight, not one already above its ideal weight.
+ */
 const MAINTENANCE_ENERGY_FACTORS: MaintenanceEnergyFactorTable = {
   dog: { neutered: 1.6, intact: 1.8, obesityProne: 1.4 },
   cat: { neutered: 1.2, intact: 1.4, obesityProne: 1.0 },
 };
 
-/** Ordem de exibição dos perfis. Fixa, para a UI não depender de Object.keys. */
+/** Display order of the profiles. Fixed, so the UI never depends on Object.keys. */
 const PROFILE_DISPLAY_ORDER: readonly PetProfile[] = ['neutered', 'intact', 'obesityProne'];
 
-const SPECIES_LABELS: Readonly<Record<Species, string>> = {
-  dog: 'cão',
-  cat: 'gato',
-};
-
 /**
- * Devolve o fator de manutenção da combinação espécie + perfil.
+ * Returns the maintenance factor for a species and profile pair.
  *
  * @example
  * maintenanceEnergyFactorFor('dog', 'neutered'); // 1.6
@@ -51,13 +52,13 @@ export function maintenanceEnergyFactorFor(species: Species, profile: PetProfile
 }
 
 /**
- * Perfis selecionáveis para uma espécie, na ordem de exibição.
+ * Profiles selectable for a species, in display order.
  *
- * Hoje as duas espécies suportam **os mesmos três perfis**, e o tipo da tabela
- * obriga isso: tirar um perfil de uma espécie é erro de compilação, não lista
- * mais curta. A função existe mesmo assim para a UI perguntar em vez de
- * embutir a lista, de modo que o critério 8 de docs/prd.md tenha um lugar só
- * para mudar se a tabela deixar de ser simétrica.
+ * Both species support **the same three profiles** today, and the table type
+ * enforces it: removing a profile from one species is a compile error, not a
+ * shorter list. The function exists anyway so the UI asks instead of hardcoding
+ * the list, giving acceptance criterion 8 of docs/prd.md a single place to
+ * change if the table ever stops being symmetric.
  *
  * @example
  * supportedProfilesFor('cat'); // ['neutered', 'intact', 'obesityProne']
@@ -67,50 +68,48 @@ export function supportedProfilesFor(species: Species): readonly PetProfile[] {
   return PROFILE_DISPLAY_ORDER;
 }
 
-/** Narrowing de valor vindo do formulário, onde o tipo é realmente desconhecido. */
+/** Narrows a value coming from the form, where the type is genuinely unknown. */
 export function isSpecies(value: unknown): value is Species {
   return value === 'dog' || value === 'cat';
 }
 
-/** Idem para o perfil. Qualquer valor fora da tabela é rejeitado. */
+/** Same for the profile. Any value outside the table is rejected. */
 export function isPetProfile(value: unknown): value is PetProfile {
   return PROFILE_DISPLAY_ORDER.some((profile) => profile === value);
 }
 
-/** Rótulo em português da espécie, usado nas mensagens de validação. */
-export function speciesLabelFor(species: Species): string {
-  return SPECIES_LABELS[requireSpecies(species)];
-}
-
 /**
- * Exige que o valor seja uma espécie suportada, ou lança.
+ * Requires the value to be a supported species, or throws.
  *
- * As tabelas deste módulo são indexadas por espécie e por perfil. Sem esta
- * guarda, um valor que burlou o tipo — vindo de URL, de estado restaurado ou
- * de um consumidor futuro do domínio em CLI ou API — produziria
- * `TypeError: Cannot read properties of undefined`, que não diz nada a
- * ninguém. Com ela, produz a mensagem que AGENTS.md > Estilo de código exige.
+ * The tables in this module are indexed by species and by profile. Without
+ * this guard, a value that slipped past the type system — from a URL, from
+ * restored state, or from a future CLI or API consumer of the domain — would
+ * produce `TypeError: Cannot read properties of undefined`, which tells nobody
+ * anything. With it, the message names the offending value.
+ *
+ * The text is English on purpose: this is a broken-contract exception a
+ * developer reads in a log, not a message the user sees. See ADR 0004.
  *
  * @example
  * requireSpecies('dog');    // 'dog'
- * requireSpecies('ferret'); // lança RangeError
+ * requireSpecies('ferret'); // throws RangeError
  */
 export function requireSpecies(value: unknown): Species {
   if (!isSpecies(value)) {
     throw new RangeError(
-      `Espécie inválida: recebido ${describeRawValue(value)}, esperado "dog" ou "cat"`,
+      `Invalid species: received ${describeRawValue(value)}, expected "dog" or "cat"`,
     );
   }
 
   return value;
 }
 
-/** Idem para o perfil. Ver `requireSpecies` para o porquê. */
+/** Same for the profile. See `requireSpecies` for the rationale. */
 export function requireProfile(value: unknown): PetProfile {
   if (!isPetProfile(value)) {
     throw new RangeError(
-      `Perfil inválido: recebido ${describeRawValue(value)}, ` +
-        'esperado "neutered", "intact" ou "obesityProne"',
+      `Invalid profile: received ${describeRawValue(value)}, ` +
+        'expected "neutered", "intact" or "obesityProne"',
     );
   }
 

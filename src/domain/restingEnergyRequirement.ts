@@ -1,27 +1,28 @@
 /**
- * Passo 1 de docs/dominio-nutricional.md: RER, as calorias gastas em repouso
- * absoluto, termoneutralidade e jejum.
+ * Step 1 of docs/dominio-nutricional.md: RER, the calories spent at absolute
+ * rest, thermoneutrality and fasting.
  *
- * Fonte dos números: docs/dominio-nutricional.md > Passo 1. A escolha da
- * família de equações está no ADR 0002 e não muda sem ADR novo.
+ * Where the numbers come from: docs/dominio-nutricional.md > Passo 1. The
+ * choice of equation family is ADR 0002 and does not change without a new ADR.
  */
 
 /**
- * RER = 70 × peso^0.75. Vale para cães e gatos, qualquer peso, qualquer porte.
+ * RER = 70 × weight^0.75. Holds for dogs and cats, any weight, any size.
  *
- * A variante linear da literatura, `RER = 30 × kg + 70`, não é usada: ela vale
- * só de 2 a 45 kg e diverge ~6% da exponencial em 10 kg (370 contra 393,64),
- * então misturar as duas produziria resultados inconsistentes. Ver ADR 0002.
+ * The linear variant found in the literature, `RER = 30 × kg + 70`, is not
+ * used: it only holds from 2 to 45 kg and diverges ~6% from the exponential at
+ * 10 kg (370 against 393.64), so mixing the two would produce inconsistent
+ * results. See ADR 0002.
  */
 const RESTING_ENERGY_COEFFICIENT = 70;
 const RESTING_ENERGY_EXPONENT = 0.75;
 
 /**
- * Calcula o RER em kcal a partir do peso em quilogramas.
+ * Calculates the RER in kcal from the weight in kilograms.
  *
- * O resultado sai com precisão total de ponto flutuante. Arredondar aqui
- * quebraria o determinismo dos testes — ver `roundToWholeNumber` em
- * `dailyPortion.ts`, que é o único ponto de arredondamento.
+ * The result carries full floating point precision. Rounding here would break
+ * test determinism — see `roundToWholeNumber` in `dailyPortion.ts`, the single
+ * rounding point.
  *
  * @example
  * calculateRestingEnergyRequirement(10); // 393.638927...
@@ -29,8 +30,8 @@ const RESTING_ENERGY_EXPONENT = 0.75;
 export function calculateRestingEnergyRequirement(weightInKilograms: number): number {
   if (!Number.isFinite(weightInKilograms) || weightInKilograms <= 0) {
     throw new RangeError(
-      `Peso inválido para o cálculo de RER: recebido ${String(weightInKilograms)}, ` +
-        'esperado número positivo em kg',
+      `Invalid weight for the RER calculation: received ${String(weightInKilograms)}, ` +
+        'expected a positive number in kg',
     );
   }
 

@@ -1,51 +1,49 @@
-import { describeRawValue, parseDecimalInput } from './fieldValidation';
-import type { FieldValidation } from './fieldValidation';
+import { parseDecimalInput } from './fieldValidation';
+import type { FieldValidation, NumericRange } from './fieldValidation';
 
 /**
- * Energia metabolizável do rótulo: validação da faixa aceita e do aviso de
- * valor atípico.
+ * Metabolizable energy from the label: range validation and the atypical-value
+ * flag.
  *
- * O rótulo informa EM em kcal/kg, e o MVP aceita **só** essa unidade. Rótulo em
- * kcal/100 g converte multiplicando por 10 — ver
+ * Labels state ME in kcal/kg, and the MVP accepts **only** that unit. A label
+ * in kcal/100 g converts by multiplying by 10 — see
  * docs/dominio-nutricional.md > Armadilhas conhecidas.
  */
 
-/** Faixa aceita, de docs/dominio-nutricional.md > Validação de entrada. */
-const MINIMUM_KCAL_PER_KILOGRAM = 200;
-const MAXIMUM_KCAL_PER_KILOGRAM = 8000;
+/** Accepted range, from docs/dominio-nutricional.md > Validação de entrada. */
+export const METABOLIZABLE_ENERGY_RANGE: NumericRange = { minimum: 200, maximum: 8000 };
 
 /**
- * Faixa típica de ração seca. Fora dela o cálculo prossegue e a UI avisa, o
- * que cobre ração úmida sem bloquear o usuário. Extremos contam como típicos.
+ * Typical dry food range. Outside it the calculation proceeds and the UI warns,
+ * which covers wet food without blocking the user. Both ends count as typical.
  */
-const TYPICAL_DRY_FOOD_MINIMUM = 2500;
-const TYPICAL_DRY_FOOD_MAXIMUM = 5000;
+const TYPICAL_DRY_FOOD_RANGE: NumericRange = { minimum: 2500, maximum: 5000 };
 
 /**
- * Valida a EM digitada contra a faixa aceita.
+ * Validates the typed ME against the accepted range.
+ *
+ * Returns the violation as data, never as a sentence — see ADR 0004.
  *
  * @example
  * validateMetabolizableEnergy('3500'); // { valid: true, value: 3500 }
  */
 export function validateMetabolizableEnergy(rawEnergy: unknown): FieldValidation<number> {
   const parsedEnergy = parseDecimalInput(rawEnergy);
-  const expectation =
-    `esperado número entre ${String(MINIMUM_KCAL_PER_KILOGRAM)} e ` +
-    `${String(MAXIMUM_KCAL_PER_KILOGRAM)} kcal/kg`;
 
   if (parsedEnergy === null) {
     return {
       valid: false,
-      message:
-        `Energia metabolizável inválida: recebido ${describeRawValue(rawEnergy)}, ` +
-        `${expectation}, com ponto decimal e não vírgula`,
+      violation: { reason: 'notANumber', received: rawEnergy, ...METABOLIZABLE_ENERGY_RANGE },
     };
   }
 
-  if (parsedEnergy < MINIMUM_KCAL_PER_KILOGRAM || parsedEnergy > MAXIMUM_KCAL_PER_KILOGRAM) {
+  if (
+    parsedEnergy < METABOLIZABLE_ENERGY_RANGE.minimum ||
+    parsedEnergy > METABOLIZABLE_ENERGY_RANGE.maximum
+  ) {
     return {
       valid: false,
-      message: `Energia metabolizável inválida: recebido ${describeRawValue(rawEnergy)}, ${expectation}`,
+      violation: { reason: 'outOfRange', received: rawEnergy, ...METABOLIZABLE_ENERGY_RANGE },
     };
   }
 
@@ -53,17 +51,17 @@ export function validateMetabolizableEnergy(rawEnergy: unknown): FieldValidation
 }
 
 /**
- * Diz se a EM está fora da faixa típica de ração seca.
+ * Tells whether the ME falls outside the typical dry food range.
  *
- * Não bloqueia nada: serve para a UI pedir conferência do rótulo, já que valor
- * atípico costuma ser erro de unidade — kcal/100 g digitado como kcal/kg.
+ * Blocks nothing: it lets the UI ask for a second look at the label, since an
+ * atypical value is usually a unit mistake — kcal/100 g typed as kcal/kg.
  *
  * @example
  * isAtypicalForDryFood(1200); // true
  */
 export function isAtypicalForDryFood(energyKcalPerKilogram: number): boolean {
   return (
-    energyKcalPerKilogram < TYPICAL_DRY_FOOD_MINIMUM ||
-    energyKcalPerKilogram > TYPICAL_DRY_FOOD_MAXIMUM
+    energyKcalPerKilogram < TYPICAL_DRY_FOOD_RANGE.minimum ||
+    energyKcalPerKilogram > TYPICAL_DRY_FOOD_RANGE.maximum
   );
 }

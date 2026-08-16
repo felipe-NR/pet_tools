@@ -1,52 +1,49 @@
-import { describeRawValue, parseDecimalInput } from './fieldValidation';
-import type { FieldValidation } from './fieldValidation';
-import { requireSpecies, speciesLabelFor } from './petProfile';
+import { parseDecimalInput } from './fieldValidation';
+import type { FieldValidation, NumericRange } from './fieldValidation';
+import { requireSpecies } from './petProfile';
 import type { Species } from './petProfile';
 
 /**
- * Faixa de peso aceita por espécie e a validação do campo de peso.
+ * Weight range accepted per species, and validation of the weight field.
  *
- * A faixa é por espécie de propósito: 20 kg é peso plausível de cão e
- * implausível de gato, e o critério 7 de docs/prd.md exige que trocar a
- * espécie reavalie o peso já digitado.
+ * The range is per species on purpose: 20 kg is a plausible dog and an
+ * implausible cat, and acceptance criterion 7 of docs/prd.md requires that
+ * switching species re-evaluates the weight already typed.
+ *
+ * Since ADR 0003 the weight asked for is the animal's **ideal** weight, not
+ * its current one. That changes what the field means, not what it accepts.
  */
 
-export interface WeightRangeInKilograms {
-  readonly minimum: number;
-  readonly maximum: number;
-}
-
-/** Faixas de docs/dominio-nutricional.md > Validação de entrada. */
-const WEIGHT_RANGES: Readonly<Record<Species, WeightRangeInKilograms>> = {
+/** Ranges from docs/dominio-nutricional.md > Validação de entrada. */
+const WEIGHT_RANGES: Readonly<Record<Species, NumericRange>> = {
   dog: { minimum: 0.5, maximum: 100 },
   cat: { minimum: 0.5, maximum: 15 },
 };
 
 /**
- * Faixa de peso aceita para a espécie, em quilogramas.
+ * Weight range accepted for the species, in kilograms.
  *
  * @example
  * weightRangeFor('cat'); // { minimum: 0.5, maximum: 15 }
  */
-export function weightRangeFor(species: Species): WeightRangeInKilograms {
+export function weightRangeFor(species: Species): NumericRange {
   return WEIGHT_RANGES[requireSpecies(species)];
 }
 
 /**
- * Valida o peso digitado contra a faixa da espécie.
+ * Validates the typed weight against the range of the species.
  *
- * `rawWeight` é `unknown` porque é o campo sob validação e vem do formulário
- * como string; `species` é precondição, já narrowada, e viola o contrato se
- * vier errada — por isso um devolve resultado e o outro lança.
+ * `rawWeight` is `unknown` because it is the field under validation and
+ * arrives from the form as a string. `species` is a precondition, already
+ * narrowed, and breaks the contract if it comes in wrong — which is why one
+ * returns a result and the other throws.
  *
- * A mensagem carrega o valor recebido e a faixa esperada, conforme o critério
- * 4 de docs/prd.md. Quando o valor sequer é numérico, ela nomeia também o
- * formato: sem isso, quem digita "12,5" lê que se esperava um número entre 0.5
- * e 100 — faixa em que 12,5 está — e não descobre que o separador é ponto.
+ * Returns the violation as data, never as a sentence: the Portuguese message
+ * is built in `src/copy/`. See ADR 0004.
  *
  * @example
  * validateWeightInKilograms('20', 'cat');
- * // { valid: false, message: 'Peso inválido: recebido "20", ...' }
+ * // { valid: false, violation: { reason: 'outOfRange', received: '20', ... } }
  */
 export function validateWeightInKilograms(
   rawWeight: unknown,
@@ -54,24 +51,13 @@ export function validateWeightInKilograms(
 ): FieldValidation<number> {
   const range = weightRangeFor(species);
   const parsedWeight = parseDecimalInput(rawWeight);
-  const expectation =
-    `esperado número entre ${String(range.minimum)} e ${String(range.maximum)} kg ` +
-    `para ${speciesLabelFor(species)}`;
 
   if (parsedWeight === null) {
-    return {
-      valid: false,
-      message:
-        `Peso inválido: recebido ${describeRawValue(rawWeight)}, ${expectation}, ` +
-        'com ponto decimal e não vírgula',
-    };
+    return { valid: false, violation: { reason: 'notANumber', received: rawWeight, ...range } };
   }
 
   if (parsedWeight < range.minimum || parsedWeight > range.maximum) {
-    return {
-      valid: false,
-      message: `Peso inválido: recebido ${describeRawValue(rawWeight)}, ${expectation}`,
-    };
+    return { valid: false, violation: { reason: 'outOfRange', received: rawWeight, ...range } };
   }
 
   return { valid: true, value: parsedWeight };

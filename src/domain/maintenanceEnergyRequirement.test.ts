@@ -3,12 +3,12 @@ import { calculateMaintenanceEnergyRequirement } from './maintenanceEnergyRequir
 import { calculateRestingEnergyRequirement } from './restingEnergyRequirement';
 
 /**
- * Valores esperados de docs/dominio-nutricional.md > Exemplos calculados à mão.
- * Três casas decimais pelo mesmo motivo explicado em
- * restingEnergyRequirement.test.ts: o documento trunca em quatro.
+ * Expected values from docs/dominio-nutricional.md > Exemplos calculados à
+ * mão. Three decimals for the reason explained in
+ * restingEnergyRequirement.test.ts: the document truncates at four.
  */
 describe('calculateMaintenanceEnergyRequirement', () => {
-  it('calcula o MER do cão de 10 kg castrado', () => {
+  it('computes the MER of the neutered 10 kg dog', () => {
     const restingEnergy = calculateRestingEnergyRequirement(10);
 
     expect(calculateMaintenanceEnergyRequirement(restingEnergy, 'dog', 'neutered')).toBeCloseTo(
@@ -17,7 +17,7 @@ describe('calculateMaintenanceEnergyRequirement', () => {
     );
   });
 
-  it('calcula o MER do gato de 4 kg castrado', () => {
+  it('computes the MER of the neutered 4 kg cat', () => {
     const restingEnergy = calculateRestingEnergyRequirement(4);
 
     expect(calculateMaintenanceEnergyRequirement(restingEnergy, 'cat', 'neutered')).toBeCloseTo(
@@ -26,7 +26,7 @@ describe('calculateMaintenanceEnergyRequirement', () => {
     );
   });
 
-  it('calcula o MER do cão de 25 kg propenso à obesidade', () => {
+  it('computes the MER of the obesity prone 25 kg dog', () => {
     const restingEnergy = calculateRestingEnergyRequirement(25);
 
     expect(calculateMaintenanceEnergyRequirement(restingEnergy, 'dog', 'obesityProne')).toBeCloseTo(
@@ -35,7 +35,7 @@ describe('calculateMaintenanceEnergyRequirement', () => {
     );
   });
 
-  it('aplica fator maior para inteiro do que para castrado, na mesma espécie', () => {
+  it('applies a larger factor to intact than to neutered, within a species', () => {
     const restingEnergy = calculateRestingEnergyRequirement(10);
     const intact = calculateMaintenanceEnergyRequirement(restingEnergy, 'dog', 'intact');
     const neutered = calculateMaintenanceEnergyRequirement(restingEnergy, 'dog', 'neutered');
@@ -43,7 +43,7 @@ describe('calculateMaintenanceEnergyRequirement', () => {
     expect(intact).toBeGreaterThan(neutered);
   });
 
-  it('não arredonda: o MER sai com precisão total', () => {
+  it('does not round: the MER keeps full precision', () => {
     const restingEnergy = calculateRestingEnergyRequirement(10);
     const maintenanceEnergy = calculateMaintenanceEnergyRequirement(
       restingEnergy,
@@ -56,7 +56,7 @@ describe('calculateMaintenanceEnergyRequirement', () => {
   });
 
   it.each([0, -1, Number.NaN, Number.POSITIVE_INFINITY])(
-    'rejeita RER não positivo ou não finito: %p',
+    'rejects a non-positive or non-finite RER: %p',
     (restingEnergy) => {
       expect(() => calculateMaintenanceEnergyRequirement(restingEnergy, 'dog', 'neutered')).toThrow(
         RangeError,
@@ -64,9 +64,9 @@ describe('calculateMaintenanceEnergyRequirement', () => {
     },
   );
 
-  it('cita o valor ofensivo na mensagem de erro', () => {
+  it('names the offending value in the error message', () => {
     expect(() => calculateMaintenanceEnergyRequirement(-1, 'dog', 'neutered')).toThrow(
-      'RER inválido para o cálculo de MER: recebido -1, esperado número positivo em kcal',
+      'Invalid RER for the MER calculation: received -1, expected a positive number in kcal',
     );
   });
 });

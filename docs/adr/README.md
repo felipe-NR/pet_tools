@@ -13,3 +13,4 @@ Seções: Status, Data, Contexto, Decisão, Alternativas descartadas, Consequên
 |[0001](./0001-stack-e-arquitetura.md)|Vite + React + TypeScript, aplicação sem backend|Aceito|
 |[0002](./0002-equacao-energetica-rer-mer.md)|`RER = 70 × kg^0.75` com fatores de MER por perfil|Aceito|
 |[0003](./0003-peso-ideal-e-perfis-suportados.md)|Peso informado é o peso ideal; perda de peso, trabalho e idoso ficam de fora|Aceito|
+|[0004](./0004-ingles-no-codigo-copy-em-portugues.md)|Inglês fora de `docs/`; copy do produto em português, isolada em `src/copy/`|Aceito|

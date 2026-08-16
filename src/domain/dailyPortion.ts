@@ -1,3 +1,4 @@
+import { describeRawValue } from './fieldValidation';
 import type { FieldValidation } from './fieldValidation';
 import { requireProfile, requireSpecies } from './petProfile';
 import type { PetProfile, Species } from './petProfile';
@@ -7,14 +8,15 @@ import { isAtypicalForDryFood, validateMetabolizableEnergy } from './metabolizab
 import { validateWeightInKilograms } from './weightRange';
 
 /**
- * Passo 3 de docs/dominio-nutricional.md e a orquestração dos três passos.
+ * Step 3 of docs/dominio-nutricional.md, plus the orchestration of the three
+ * steps.
  *
- * Esta é a única porta de entrada do domínio para a UI, e por isso valida tudo
- * que recebe. Os campos entram como `unknown` porque o formulário entrega
- * string — narrowing acontece aqui, uma vez.
+ * This is the domain's only entry point for the UI, which is why it validates
+ * everything it receives. The fields arrive as `unknown` because the form
+ * hands over strings — narrowing happens here, once.
  */
 
-/** Entrada crua, como sai do formulário. */
+/** Raw input, exactly as it leaves the form. */
 export interface DailyPortionInput {
   readonly species: unknown;
   readonly profile: unknown;
@@ -23,11 +25,11 @@ export interface DailyPortionInput {
 }
 
 /**
- * Resultado com os passos intermediários expostos: o critério de escopo do
- * MVP em docs/prd.md pede que os passos do cálculo apareçam na tela.
+ * Result with the intermediate steps exposed: the MVP scope in docs/prd.md
+ * requires the calculation steps to appear on screen.
  *
- * Todos os números saem com precisão total de ponto flutuante. O
- * arredondamento é responsabilidade de quem exibe — ver `roundToWholeNumber`.
+ * Every number carries full floating point precision. Rounding belongs to
+ * whoever displays it — see `roundToWholeNumber`.
  */
 export interface DailyPortionResult {
   readonly restingEnergyRequirementKcal: number;
@@ -43,15 +45,16 @@ interface ValidatedDailyPortionInput {
   readonly metabolizableEnergyKcalPerKilogram: number;
 }
 
-/** O rótulo traz EM em kcal/kg; o cálculo precisa de kcal/g. */
+/** The label states ME in kcal/kg; the calculation needs kcal/g. */
 const GRAMS_PER_KILOGRAM = 1000;
 
 /**
- * Calcula a porção diária em gramas a partir da entrada crua do formulário.
+ * Calculates the daily portion in grams from the raw form input.
  *
- * Lança `RangeError` quando qualquer campo é inválido, com a mesma mensagem
- * que a validação de campo mostraria. A UI valida durante a digitação; este
- * guarda é a rede de segurança de quem usar o domínio direto.
+ * Throws `RangeError` when any field is invalid. The message is English and
+ * developer facing: the UI validates per field while typing and renders the
+ * Portuguese text from `src/copy/`, so reaching this throw means a caller
+ * skipped that path. See ADR 0004.
  *
  * @example
  * calculateDailyPortion({
@@ -85,13 +88,12 @@ export function calculateDailyPortion(input: DailyPortionInput): DailyPortionRes
 }
 
 /**
- * Arredonda para inteiro. Único ponto de arredondamento do domínio.
+ * Rounds to a whole number. The domain's single rounding point.
  *
- * docs/dominio-nutricional.md > Precisão e arredondamento: arredonde uma vez,
- * no fim. O motivo é determinismo de teste, não magnitude do erro — com
- * arredondamento intermediário o valor esperado passa a depender de onde o
- * arredondamento aconteceu, e duas implementações corretas discordam na
- * última unidade.
+ * docs/dominio-nutricional.md > Precisão e arredondamento: round once, at the
+ * end. The reason is test determinism, not error magnitude — with intermediate
+ * rounding the expected value starts to depend on where the rounding happened,
+ * and two correct implementations disagree on the last unit.
  *
  * @example
  * roundToWholeNumber(179.949224); // 180
@@ -106,17 +108,25 @@ function validateDailyPortionInput(input: DailyPortionInput): ValidatedDailyPort
   return {
     species,
     profile: requireProfile(input.profile),
-    weightInKilograms: unwrapOrThrow(validateWeightInKilograms(input.weightInKilograms, species)),
+    weightInKilograms: unwrapOrThrow(
+      'weight',
+      validateWeightInKilograms(input.weightInKilograms, species),
+    ),
     metabolizableEnergyKcalPerKilogram: unwrapOrThrow(
+      'metabolizable energy',
       validateMetabolizableEnergy(input.metabolizableEnergyKcalPerKilogram),
     ),
   };
 }
 
-function unwrapOrThrow<T>(validation: FieldValidation<T>): T {
-  if (!validation.valid) {
-    throw new RangeError(validation.message);
+function unwrapOrThrow<T>(fieldName: string, validation: FieldValidation<T>): T {
+  if (validation.valid) {
+    return validation.value;
   }
 
-  return validation.value;
+  const { reason, received, minimum, maximum } = validation.violation;
+  throw new RangeError(
+    `Invalid ${fieldName} (${reason}): received ${describeRawValue(received)}, ` +
+      `expected a decimal number between ${String(minimum)} and ${String(maximum)}`,
+  );
 }

@@ -1,46 +1,53 @@
 # CLAUDE.md
 
-**As regras deste repositório estão em [AGENTS.md](./AGENTS.md). Leia esse arquivo antes de editar qualquer coisa.**
+**This repository's rules live in [AGENTS.md](./AGENTS.md). Read that file before editing anything.**
 
-Este arquivo existe só para o que é específico do Claude Code. Ele não repete nada do AGENTS.md — se houver conflito, AGENTS.md vence.
+This file exists only for what is specific to Claude Code. It repeats nothing from AGENTS.md — if the two conflict, AGENTS.md wins.
 
-## Ordem de leitura
+## Reading order
 
-1. `AGENTS.md` — sempre
-2. `docs/dominio-nutricional.md` — antes de tocar em `src/domain/`
-3. `docs/adr/` — antes de propor mudança de stack, arquitetura ou fórmula
+1. `AGENTS.md` — always
+2. `docs/dominio-nutricional.md` — before touching `src/domain/`
+3. `docs/adr/` — before proposing a change to stack, architecture or formula
 
-## Específico do Claude Code
+## Language
 
-- **Plan mode antes de implementar.** Qualquer tarefa que passe de ~3 arquivos ou envolva decisão de arquitetura entra em plan mode primeiro. Aprovação humana antes do código.
-- **Subagentes** para busca ampla e leitura exploratória. A implementação e as decisões de domínio ficam na sessão principal, com o contexto completo.
-- **Não rode `git commit` nem `git push` sem pedido explícito.**
-- Ao editar um arquivo de domínio, cite a fonte no comentário e o ADR correspondente. Ver "Comentários" no AGENTS.md.
-- Se um comando de `AGENTS.md > Comandos` não existir ainda, diga isso em vez de inventar um substituto.
+English everywhere except `docs/`, `src/copy/` and `index.html`. That includes commit messages. See `AGENTS.md > Language` and ADR 0004.
 
-## Ao terminar uma tarefa
+## Specific to Claude Code
 
-Rode `npm run lint && npm test && npm run build` e reporte o resultado real, incluindo falhas. Não declare pronto o que não passou.
+- **Plan mode before implementing.** Any task touching more than ~3 files or involving an architectural decision goes through plan mode first. Human approval before code.
+- **Subagents** for broad search and exploratory reading. Implementation and domain decisions stay in the main session, with full context.
+- **Do not run `git commit` or `git push` without an explicit request.**
+- When editing a domain file, cite the source in the comment and the matching ADR. See "Comments" in AGENTS.md.
+- If a command from `AGENTS.md > Commands` does not exist yet, say so instead of inventing a substitute.
 
-## Manutenção deste contexto
+## When finishing a task
 
-Quando uma decisão nova sobreviver à sessão, registre no lugar certo em vez de deixar no histórico do chat:
+Run `npm run lint && npm test && npm run build` and report the real result, failures included. Do not declare done what did not pass.
 
-|tipo de conhecimento|onde vai|
+## Maintaining this context
+
+When a new decision survives a session, record it in the right place instead of leaving it in chat history:
+
+|kind of knowledge|where it goes|
 |-|-|
-|regra de código ou de processo|`AGENTS.md`|
-|fórmula, fator, faixa de validação|`docs/dominio-nutricional.md`|
-|escolha entre alternativas|`docs/adr/NNNN-titulo.md`|
-|escopo, critério de aceite|`docs/prd.md`|
+|code or process rule|`AGENTS.md`|
+|formula, factor, validation range|`docs/dominio-nutricional.md`|
+|choice between alternatives|`docs/adr/NNNN-titulo.md`|
+|scope, acceptance criterion|`docs/prd.md`|
+|Portuguese text the user reads|`src/copy/`|
 
-## Memória de longo prazo (ai-memory)
+ADR filenames stay in Portuguese, matching the rest of `docs/`.
 
-O bloco de roteamento do ai-memory fica **só no `AGENTS.md`**, entre `<!-- ai-memory:start -->` e `<!-- ai-memory:end -->`. Não duplique aqui: este repositório trata o `AGENTS.md` como arquivo canônico, e você já vai lê-lo por causa da ordem de leitura acima.
+## Long-term memory (ai-memory)
 
-Ao refrescar o bloco, direcione o alvo explicitamente:
+The ai-memory routing block lives **only in `AGENTS.md`**, between `<!-- ai-memory:start -->` and `<!-- ai-memory:end -->`. Do not duplicate it here: this repository treats `AGENTS.md` as the canonical file, and the reading order above means you will read it anyway.
+
+When refreshing the block, name the target explicitly:
 
 ```
 ai-memory install-instructions --target AGENTS.md --no-skills
 ```
 
-Sem `--target`, o CLI detecta os dois arquivos e reinstala o bloco no `CLAUDE.md` também, desfazendo essa decisão. As skills do ai-memory estão instaladas globalmente em `~/.claude/skills/`, por isso o `--no-skills`.
+Without `--target`, the CLI detects both files and reinstalls the block into `CLAUDE.md` too, undoing that decision. The ai-memory skills are installed globally under `~/.claude/skills/`, hence `--no-skills`.

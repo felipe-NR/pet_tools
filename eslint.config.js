@@ -18,8 +18,8 @@ export default tseslint.config(
       },
     },
     rules: {
-      // AGENTS.md > O que não fazer: não silenciar erro de tipo com any, as
-      // ou @ts-ignore. E AGENTS.md > Estilo: nada de função sem tipo de retorno.
+      // AGENTS.md > What not to do: never silence a type error with any, as
+      // or @ts-ignore. And AGENTS.md > Code style: no function without a return type.
       '@typescript-eslint/no-explicit-any': 'error',
       '@typescript-eslint/explicit-function-return-type': 'error',
       '@typescript-eslint/consistent-type-imports': 'error',
@@ -29,9 +29,18 @@ export default tseslint.config(
   {
     files: ['src/domain/**/*.ts'],
     rules: {
-      // AGENTS.md > Estrutura: src/domain/ não conhece React nem DOM. A regra
-      // existe para o motor de cálculo ser testável sem renderizar nada.
-      'no-restricted-imports': ['error', { patterns: ['react', 'react-dom', 'react/*'] }],
+      // Two structural rules, checked rather than trusted.
+      //
+      // AGENTS.md > Structure: src/domain/ knows nothing about React or the
+      // DOM, so the calculation engine is testable without rendering anything.
+      //
+      // ADR 0004: the domain never imports the copy layer either. It reports
+      // violations as data and src/copy/ turns them into Portuguese, which is
+      // what keeps the engine reusable by a CLI or an API.
+      'no-restricted-imports': [
+        'error',
+        { patterns: ['react', 'react-dom', 'react/*', '**/copy/*', '../copy/*'] },
+      ],
       'no-restricted-globals': [
         'error',
         'window',

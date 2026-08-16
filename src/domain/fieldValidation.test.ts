@@ -10,7 +10,7 @@ describe('parseDecimalInput', () => {
     ['0.5', 0.5],
     ['  25  ', 25],
     ['3500', 3500],
-  ])('converte %p em %p', (rawValue, expectedValue) => {
+  ])('turns %p into %p', (rawValue, expectedValue) => {
     expect(parseDecimalInput(rawValue)).toBe(expectedValue);
   });
 
@@ -18,8 +18,8 @@ describe('parseDecimalInput', () => {
     ['abc'],
     [''],
     ['   '],
-    // Vírgula decimal não é aceita: o campo do formulário entrega ponto, e
-    // aceitar as duas formas é decisão de UI, não de domínio.
+    // The decimal comma is not accepted: the form field hands over a dot, and
+    // accepting both forms is a UI decision, not a domain one.
     ['12,5'],
     [null],
     [undefined],
@@ -28,15 +28,15 @@ describe('parseDecimalInput', () => {
     [{}],
     [[]],
     [true],
-  ])('rejeita %p devolvendo null', (rawValue) => {
+  ])('rejects %p by returning null', (rawValue) => {
     expect(parseDecimalInput(rawValue)).toBeNull();
   });
 
-  // Number() sozinho aceitaria todos estes e produziria um número plausível
-  // que entraria no cálculo sem ninguém perceber.
+  // Number() alone would accept all of these and produce a plausible number
+  // that reached the calculation unnoticed.
   it.each([
-    ['0x1194'], // Number() daria 4500, uma EM válida
-    ['1e1'], // Number() daria 10, um peso válido
+    ['0x1194'], // Number() would give 4500, a valid ME
+    ['1e1'], // Number() would give 10, a valid weight
     ['0b101'],
     ['0o17'],
     ['+5'],
@@ -44,19 +44,19 @@ describe('parseDecimalInput', () => {
     ['.5'],
     ['1_000'],
     ['Infinity'],
-  ])('rejeita o literal não decimal %p', (rawValue) => {
+  ])('rejects the non-decimal literal %p', (rawValue) => {
     expect(parseDecimalInput(rawValue)).toBeNull();
   });
 
-  it('rejeita o decimal que passa do maior número representável', () => {
-    // Só dígitos, então o padrão aceita; Number() estoura para Infinity.
-    // É a única forma de a guarda de finitude disparar depois do padrão.
+  it('rejects a decimal beyond the largest representable number', () => {
+    // Digits only, so the pattern accepts it; Number() overflows to Infinity.
+    // It is the only way the finiteness guard fires after the pattern.
     expect(parseDecimalInput('9'.repeat(400))).toBeNull();
   });
 });
 
 describe('describeRawValue', () => {
-  it('põe aspas em string para o valor vazio aparecer na mensagem', () => {
+  it('quotes strings so an empty value still shows up in the message', () => {
     expect(describeRawValue('abc')).toBe('"abc"');
     expect(describeRawValue('')).toBe('""');
   });
@@ -67,7 +67,7 @@ describe('describeRawValue', () => {
     [null, 'null'],
     [undefined, 'undefined'],
     [Number.NaN, 'NaN'],
-  ])('descreve %p como %p', (rawValue, expectedDescription) => {
+  ])('describes %p as %p', (rawValue, expectedDescription) => {
     expect(describeRawValue(rawValue)).toBe(expectedDescription);
   });
 });

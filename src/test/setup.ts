@@ -1,3 +1,3 @@
-// Registra os matchers do jest-dom (toBeInTheDocument, toHaveAccessibleName, ...)
-// e a ampliação de tipos correspondente para o Vitest.
+// Registers the jest-dom matchers (toBeInTheDocument, toHaveAccessibleName, ...)
+// and their type augmentation for Vitest.
 import '@testing-library/jest-dom/vitest';

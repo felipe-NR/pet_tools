@@ -2,19 +2,20 @@ import { maintenanceEnergyFactorFor } from './petProfile';
 import type { PetProfile, Species } from './petProfile';
 
 /**
- * Passo 2 de docs/dominio-nutricional.md: MER, as calorias diárias que mantêm
- * o peso atual. A literatura também chama de DER e NEM; o código usa MER em
- * todo lugar.
+ * Step 2 of docs/dominio-nutricional.md: MER, the daily calories that keep the
+ * current weight. The literature also calls it DER and NEM; the code says MER
+ * everywhere.
  *
- * Os fatores não moram aqui — moram em `petProfile.ts`, que é a fonte única.
+ * The factors do not live here — they live in `petProfile.ts`, the single
+ * source.
  */
 
 /**
- * Calcula o MER em kcal: `MER = RER × fator do perfil`.
+ * Calculates the MER in kcal: `MER = RER × profile factor`.
  *
- * Recebe o RER pronto em vez do peso para que a composição dos três passos
- * fique visível em `dailyPortion.ts`, e para que o valor intermediário possa
- * ser exibido na tela sem ser recalculado.
+ * Takes the RER already computed rather than the weight so that the
+ * composition of the three steps stays visible in `dailyPortion.ts`, and so
+ * the intermediate value can reach the screen without being recomputed.
  *
  * @example
  * calculateMaintenanceEnergyRequirement(393.638927, 'dog', 'neutered');
@@ -27,8 +28,8 @@ export function calculateMaintenanceEnergyRequirement(
 ): number {
   if (!Number.isFinite(restingEnergyRequirementKcal) || restingEnergyRequirementKcal <= 0) {
     throw new RangeError(
-      `RER inválido para o cálculo de MER: recebido ${String(restingEnergyRequirementKcal)}, ` +
-        'esperado número positivo em kcal',
+      `Invalid RER for the MER calculation: received ${String(restingEnergyRequirementKcal)}, ` +
+        'expected a positive number in kcal',
     );
   }
 

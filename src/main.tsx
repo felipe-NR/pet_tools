@@ -5,10 +5,10 @@ import { App } from './App.tsx';
 
 const rootElement = document.getElementById('root');
 
-// AGENTS.md > O que não fazer: nada de `!` para calar o compilador. Se o
-// elemento sumir do index.html, a mensagem diz o que faltou.
+// AGENTS.md > What not to do: no `!` to silence the compiler. If the element
+// ever disappears from index.html, the message says what was missing.
 if (rootElement === null) {
-  throw new Error('Elemento raiz não encontrado: esperado <div id="root"> em index.html');
+  throw new Error('Root element not found: expected <div id="root"> in index.html');
 }
 
 createRoot(rootElement).render(

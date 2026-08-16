@@ -8,15 +8,15 @@ export default defineConfig({
   test: {
     environment: 'jsdom',
     setupFiles: ['./src/test/setup.ts'],
-    // AGENTS.md > Testes: todo teste roda headless, sem seed manual e sem
-    // configuração ausente. Os testes ficam ao lado do código.
+    // AGENTS.md > Tests: every test runs headless, with no manual seeding and
+    // no missing configuration. Tests sit next to the code they cover.
     include: ['src/**/*.test.{ts,tsx}'],
     coverage: {
       provider: 'v8',
       include: ['src/**/*.{ts,tsx}'],
       exclude: ['src/**/*.test.{ts,tsx}', 'src/test/**', 'src/main.tsx'],
-      // Limiares de docs/prd.md > Pronto quando: domínio acima de 90% de
-      // linhas, projeto acima de 80%. Branches vem de AGENTS.md > Testes.
+      // Thresholds from docs/prd.md > Pronto quando: domain above 90% of
+      // lines, project above 80%. Branches come from AGENTS.md > Tests.
       thresholds: {
         lines: 80,
         branches: 70,

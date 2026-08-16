@@ -5,13 +5,13 @@ import {
   maintenanceEnergyFactorFor,
   requireProfile,
   requireSpecies,
-  speciesLabelFor,
   supportedProfilesFor,
 } from './petProfile';
 
 /**
- * Os seis fatores vêm de docs/dominio-nutricional.md > Passo 2, confirmados no
- * MSD/Merck Veterinary Manual. Este é o único arquivo de teste que os cita.
+ * The six factors come from docs/dominio-nutricional.md > Passo 2, confirmed
+ * in the MSD/Merck Veterinary Manual and in Carlson's Table 1. This is the
+ * only test file that spells them out.
  */
 describe('maintenanceEnergyFactorFor', () => {
   it.each([
@@ -21,11 +21,11 @@ describe('maintenanceEnergyFactorFor', () => {
     ['cat', 'neutered', 1.2],
     ['cat', 'intact', 1.4],
     ['cat', 'obesityProne', 1.0],
-  ] as const)('devolve o fator de %s / %s', (species, profile, expectedFactor) => {
+  ] as const)('returns the factor for %s / %s', (species, profile, expectedFactor) => {
     expect(maintenanceEnergyFactorFor(species, profile)).toBe(expectedFactor);
   });
 
-  it('separa os fatores por espécie: castrado não vale o mesmo para cão e gato', () => {
+  it('keeps factors apart per species: neutered is not worth the same for dog and cat', () => {
     expect(maintenanceEnergyFactorFor('dog', 'neutered')).not.toBe(
       maintenanceEnergyFactorFor('cat', 'neutered'),
     );
@@ -33,15 +33,15 @@ describe('maintenanceEnergyFactorFor', () => {
 });
 
 describe('supportedProfilesFor', () => {
-  // Critério 8 de docs/prd.md: trocar de espécie mantém apenas os perfis
-  // válidos daquela espécie selecionáveis.
-  it.each(['dog', 'cat'] as const)('lista os perfis suportados de %s', (species) => {
+  // Acceptance criterion 8 of docs/prd.md: switching species keeps only the
+  // profiles valid for that species selectable.
+  it.each(['dog', 'cat'] as const)('lists the profiles supported by %s', (species) => {
     expect(supportedProfilesFor(species)).toEqual(['neutered', 'intact', 'obesityProne']);
   });
 
-  it('não expõe perfil fora da tabela', () => {
-    // Filhote, gestante, lactante e doente estão fora de escopo por decisão
-    // registrada em docs/prd.md > Fora de escopo.
+  it('never exposes a profile outside the table', () => {
+    // Puppies, pregnant and lactating animals are out of scope by a decision
+    // recorded in docs/prd.md > Fora de escopo.
     for (const species of ['dog', 'cat'] as const) {
       expect(supportedProfilesFor(species)).not.toContain('puppy');
       expect(supportedProfilesFor(species)).toHaveLength(3);
@@ -50,66 +50,59 @@ describe('supportedProfilesFor', () => {
 });
 
 describe('isSpecies', () => {
-  it.each(['dog', 'cat'])('aceita %p', (value) => {
+  it.each(['dog', 'cat'])('accepts %p', (value) => {
     expect(isSpecies(value)).toBe(true);
   });
 
-  it.each(['Dog', 'cachorro', '', null, undefined, 3, {}])('rejeita %p', (value) => {
+  it.each(['Dog', 'cachorro', '', null, undefined, 3, {}])('rejects %p', (value) => {
     expect(isSpecies(value)).toBe(false);
   });
 });
 
 describe('isPetProfile', () => {
-  it.each(['neutered', 'intact', 'obesityProne'])('aceita %p', (value) => {
+  it.each(['neutered', 'intact', 'obesityProne'])('accepts %p', (value) => {
     expect(isPetProfile(value)).toBe(true);
   });
 
-  it.each(['puppy', 'senior', 'pregnant', '', null, undefined, 1.4])('rejeita %p', (value) => {
+  it.each(['puppy', 'senior', 'pregnant', '', null, undefined, 1.4])('rejects %p', (value) => {
     expect(isPetProfile(value)).toBe(false);
   });
 });
 
-describe('speciesLabelFor', () => {
-  it('devolve o rótulo em português usado nas mensagens de erro', () => {
-    expect(speciesLabelFor('dog')).toBe('cão');
-    expect(speciesLabelFor('cat')).toBe('gato');
-  });
-});
-
 /**
- * As tabelas deste módulo são indexadas por espécie e por perfil. Um valor que
- * burlou o tipo produziria `TypeError: Cannot read properties of undefined`,
- * que não diz nada a quem lê o log. Estas guardas trocam isso pela mensagem
- * que AGENTS.md > Estilo de código exige.
+ * The tables in this module are indexed by species and by profile. A value
+ * that slipped past the type system would produce `TypeError: Cannot read
+ * properties of undefined`, which tells nobody anything. These guards trade
+ * that for a message that names the offending value.
  */
 describe('requireSpecies', () => {
-  it.each(['dog', 'cat'] as const)('devolve %p intacto', (species) => {
+  it.each(['dog', 'cat'] as const)('returns %p untouched', (species) => {
     expect(requireSpecies(species)).toBe(species);
   });
 
-  it.each(['ferret', 'Dog', 'cachorro', '', null, undefined, 3, {}])('lança para %p', (value) => {
+  it.each(['ferret', 'Dog', 'cachorro', '', null, undefined, 3, {}])('throws for %p', (value) => {
     expect(() => requireSpecies(value)).toThrow(RangeError);
   });
 
-  it('cita o valor ofensivo e os valores esperados', () => {
+  it('names the offending value and the accepted ones', () => {
     expect(() => requireSpecies('ferret')).toThrow(
-      'Espécie inválida: recebido "ferret", esperado "dog" ou "cat"',
+      'Invalid species: received "ferret", expected "dog" or "cat"',
     );
   });
 });
 
 describe('requireProfile', () => {
-  it.each(['neutered', 'intact', 'obesityProne'] as const)('devolve %p intacto', (profile) => {
+  it.each(['neutered', 'intact', 'obesityProne'] as const)('returns %p untouched', (profile) => {
     expect(requireProfile(profile)).toBe(profile);
   });
 
-  it.each(['puppy', 'pregnant', 'senior', '', null, undefined, 1.4])('lança para %p', (value) => {
+  it.each(['puppy', 'pregnant', 'senior', '', null, undefined, 1.4])('throws for %p', (value) => {
     expect(() => requireProfile(value)).toThrow(RangeError);
   });
 
-  it('cita o valor ofensivo e os valores esperados', () => {
+  it('names the offending value and the accepted ones', () => {
     expect(() => requireProfile('puppy')).toThrow(
-      'Perfil inválido: recebido "puppy", esperado "neutered", "intact" ou "obesityProne"',
+      'Invalid profile: received "puppy", expected "neutered", "intact" or "obesityProne"',
     );
   });
 });

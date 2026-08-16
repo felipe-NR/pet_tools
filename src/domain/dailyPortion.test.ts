@@ -3,13 +3,14 @@ import { calculateDailyPortion, roundToWholeNumber } from './dailyPortion';
 import type { DailyPortionInput } from './dailyPortion';
 
 /**
- * Os três casos abaixo são os critérios de aceite 1, 2 e 3 de docs/prd.md, e
- * as entradas e resultados vêm de docs/dominio-nutricional.md > Exemplos
- * calculados à mão. RER e MER comparam em três casas porque o documento trunca
- * em quatro; gramas por dia comparam o inteiro exato, que é o que a tela mostra.
+ * The three cases below are acceptance criteria 1, 2 and 3 of docs/prd.md, and
+ * their inputs and results come from docs/dominio-nutricional.md > Exemplos
+ * calculados à mão. RER and MER compare at three decimals because the document
+ * truncates at four; grams per day compares the exact integer, which is what
+ * the screen shows.
  */
 describe('calculateDailyPortion', () => {
-  it('critério 1 — cão de 10 kg castrado com ração de 3 500 kcal/kg', () => {
+  it('criterion 1 — neutered 10 kg dog with a 3500 kcal/kg food', () => {
     const result = calculateDailyPortion({
       species: 'dog',
       profile: 'neutered',
@@ -22,7 +23,7 @@ describe('calculateDailyPortion', () => {
     expect(roundToWholeNumber(result.gramsPerDay)).toBe(180);
   });
 
-  it('critério 2 — gato de 4 kg castrado com ração de 4 000 kcal/kg', () => {
+  it('criterion 2 — neutered 4 kg cat with a 4000 kcal/kg food', () => {
     const result = calculateDailyPortion({
       species: 'cat',
       profile: 'neutered',
@@ -35,7 +36,7 @@ describe('calculateDailyPortion', () => {
     expect(roundToWholeNumber(result.gramsPerDay)).toBe(59);
   });
 
-  it('critério 3 — cão de 25 kg propenso à obesidade com ração de 3 800 kcal/kg', () => {
+  it('criterion 3 — obesity prone 25 kg dog with a 3800 kcal/kg food', () => {
     const result = calculateDailyPortion({
       species: 'dog',
       profile: 'obesityProne',
@@ -48,7 +49,7 @@ describe('calculateDailyPortion', () => {
     expect(roundToWholeNumber(result.gramsPerDay)).toBe(288);
   });
 
-  it('devolve os passos intermediários para a tela mostrar o cálculo', () => {
+  it('returns the intermediate steps for the screen to show the calculation', () => {
     const result = calculateDailyPortion(validInput());
 
     expect(Object.keys(result).sort()).toEqual([
@@ -59,7 +60,7 @@ describe('calculateDailyPortion', () => {
     ]);
   });
 
-  it('não arredonda nada no caminho: o resultado sai com precisão total', () => {
+  it('rounds nothing along the way: the result keeps full precision', () => {
     const result = calculateDailyPortion(validInput());
 
     expect(Number.isInteger(result.restingEnergyRequirementKcal)).toBe(false);
@@ -67,7 +68,7 @@ describe('calculateDailyPortion', () => {
     expect(Number.isInteger(result.gramsPerDay)).toBe(false);
   });
 
-  it('aceita string nos campos numéricos, como o formulário entrega', () => {
+  it('accepts strings in the numeric fields, as the form hands them over', () => {
     const result = calculateDailyPortion({
       species: 'dog',
       profile: 'neutered',
@@ -78,8 +79,8 @@ describe('calculateDailyPortion', () => {
     expect(roundToWholeNumber(result.gramsPerDay)).toBe(180);
   });
 
-  // Critério 6: EM atípica calcula normalmente e sinaliza.
-  it('calcula e sinaliza EM fora da faixa típica de ração seca', () => {
+  // Criterion 6: atypical ME calculates normally and is flagged.
+  it('calculates and flags an ME outside the typical dry food range', () => {
     const result = calculateDailyPortion({
       ...validInput(),
       metabolizableEnergyKcalPerKilogram: 900,
@@ -89,13 +90,13 @@ describe('calculateDailyPortion', () => {
     expect(result.gramsPerDay).toBeGreaterThan(0);
   });
 
-  it('não sinaliza EM dentro da faixa típica', () => {
+  it('does not flag an ME inside the typical range', () => {
     expect(calculateDailyPortion(validInput()).metabolizableEnergyIsAtypical).toBe(false);
   });
 
-  // Critério 4: peso zero, negativo ou fora da faixa bloqueia o cálculo.
+  // Criterion 4: zero, negative or out-of-range weight blocks the calculation.
   it.each([0, -3, 0.4, 100.1, 'abc', '', null, undefined])(
-    'recusa calcular com peso %p',
+    'refuses to calculate with weight %p',
     (weightInKilograms) => {
       expect(() => calculateDailyPortion({ ...validInput(), weightInKilograms })).toThrow(
         RangeError,
@@ -103,7 +104,7 @@ describe('calculateDailyPortion', () => {
     },
   );
 
-  it('recusa 20 kg para gato e aceita para cão', () => {
+  it('refuses 20 kg for a cat and accepts it for a dog', () => {
     expect(() =>
       calculateDailyPortion({ ...validInput(), species: 'cat', weightInKilograms: 20 }),
     ).toThrow(RangeError);
@@ -112,9 +113,9 @@ describe('calculateDailyPortion', () => {
     ).not.toThrow();
   });
 
-  // Critério 5: EM fora de 200–8 000 bloqueia o cálculo.
+  // Criterion 5: ME outside 200–8000 blocks the calculation.
   it.each([0, -1, 199, 8001, 'abc', '', null, undefined])(
-    'recusa calcular com EM %p',
+    'refuses to calculate with ME %p',
     (metabolizableEnergyKcalPerKilogram) => {
       expect(() =>
         calculateDailyPortion({ ...validInput(), metabolizableEnergyKcalPerKilogram }),
@@ -122,19 +123,33 @@ describe('calculateDailyPortion', () => {
     },
   );
 
-  it('propaga a mensagem da validação, com valor recebido e faixa esperada', () => {
+  it('throws a developer-facing message carrying the value and the expectation', () => {
+    // English on purpose: reaching this throw means a caller skipped the
+    // per-field validation the UI runs while typing. See ADR 0004.
     expect(() =>
       calculateDailyPortion({ ...validInput(), species: 'cat', weightInKilograms: 20 }),
-    ).toThrow('Peso inválido: recebido 20, esperado número entre 0.5 e 15 kg para gato');
+    ).toThrow(
+      'Invalid weight (outOfRange): received 20, expected a decimal number between 0.5 and 15',
+    );
   });
 
-  it('recusa espécie fora da tabela', () => {
+  it('distinguishes a non-numeric field from an out-of-range one when throwing', () => {
+    expect(() =>
+      calculateDailyPortion({ ...validInput(), metabolizableEnergyKcalPerKilogram: '3.500,5' }),
+    ).toThrow(
+      'Invalid metabolizable energy (notANumber): received "3.500,5", ' +
+        'expected a decimal number between 200 and 8000',
+    );
+  });
+
+  it('refuses a species outside the table', () => {
     expect(() => calculateDailyPortion({ ...validInput(), species: 'ferret' })).toThrow(RangeError);
   });
 
-  it('recusa perfil fora da tabela, inclusive os que estão fora de escopo', () => {
-    // Filhote, gestante e lactante têm fator na literatura mas estão fora de
-    // escopo por decisão de docs/prd.md. O domínio não os inventa.
+  it('refuses a profile outside the table, including the out-of-scope ones', () => {
+    // Puppies, pregnant and lactating animals have factors in the literature
+    // but are out of scope by a decision in docs/prd.md. The domain does not
+    // invent them.
     for (const profile of ['puppy', 'pregnant', 'senior', '']) {
       expect(() => calculateDailyPortion({ ...validInput(), profile })).toThrow(RangeError);
     }
@@ -148,7 +163,7 @@ describe('roundToWholeNumber', () => {
     [288.33507, 288],
     [0.5, 1],
     [1.4, 1],
-  ])('arredonda %p para %p', (value, expectedValue) => {
+  ])('rounds %p to %p', (value, expectedValue) => {
     expect(roundToWholeNumber(value)).toBe(expectedValue);
   });
 });

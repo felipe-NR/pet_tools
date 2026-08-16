@@ -1,13 +1,17 @@
+import { APP_TITLE, SHELL_NOTICE } from './copy/appShell';
+
 /**
- * Casca da aplicação. O formulário e o resultado entram na branch de UI, que
- * cobre os critérios 9 a 15 de docs/prd.md. Esta branch entrega o scaffold e
- * src/domain/.
+ * Application shell. The form and the result land in the UI branch, which
+ * covers acceptance criteria 9 to 15 of docs/prd.md. This branch delivers the
+ * scaffold and src/domain/.
+ *
+ * The visible text comes from src/copy/ — see ADR 0004.
  */
 export function App(): React.JSX.Element {
   return (
     <main>
-      <h1>Calculadora de porção diária de ração</h1>
-      <p>Em construção. O motor de cálculo vive em src/domain/.</p>
+      <h1>{APP_TITLE}</h1>
+      <p>{SHELL_NOTICE}</p>
     </main>
   );
 }
