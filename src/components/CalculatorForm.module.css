@@ -1,0 +1,90 @@
+.form {
+  min-width: 0;
+  padding: clamp(1.25rem, 4vw, 2rem);
+  border: 1px solid var(--color-border);
+  border-radius: 1.25rem;
+  background: var(--color-surface);
+  box-shadow: var(--shadow-card);
+}
+
+.form h2 {
+  margin: 0 0 1.5rem;
+  color: var(--color-ink);
+  font-family: Georgia, 'Times New Roman', serif;
+  font-size: 1.6rem;
+}
+
+.grid {
+  display: grid;
+  gap: 1.25rem;
+}
+
+.field {
+  min-width: 0;
+}
+
+.field label {
+  display: block;
+  margin-bottom: 0.4rem;
+  color: var(--color-ink);
+  font-size: 0.92rem;
+  font-weight: 750;
+}
+
+.field input,
+.field select {
+  width: 100%;
+  min-width: 0;
+  min-height: 3rem;
+  padding: 0.7rem 0.8rem;
+  border: 1px solid var(--color-border-strong);
+  border-radius: 0.7rem;
+  background: var(--color-surface-raised);
+  color: var(--color-ink);
+  font: inherit;
+}
+
+.field input:focus,
+.field select:focus,
+.submit:focus-visible {
+  outline: 3px solid var(--color-focus);
+  outline-offset: 2px;
+}
+
+.field input[aria-invalid='true'] {
+  border-color: var(--color-error);
+}
+
+.help,
+.error {
+  margin: 0.5rem 0 0;
+  font-size: 0.8rem;
+  line-height: 1.45;
+}
+
+.help {
+  color: var(--color-muted);
+}
+
+.error {
+  color: var(--color-error);
+  font-weight: 650;
+}
+
+.submit {
+  width: 100%;
+  min-height: 3.25rem;
+  margin-top: 1.5rem;
+  padding: 0.75rem 1rem;
+  border: 0;
+  border-radius: 0.8rem;
+  background: var(--color-accent);
+  color: white;
+  cursor: pointer;
+  font: inherit;
+  font-weight: 800;
+}
+
+.submit:hover {
+  background: var(--color-accent-dark);
+}

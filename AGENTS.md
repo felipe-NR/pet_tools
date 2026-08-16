@@ -15,9 +15,9 @@ Rationale in `docs/adr/0004-ingles-no-codigo-copy-em-portugues.md`.
 
 ## Current state
 
-The scaffold exists and the five commands below run. `src/domain/` is implemented and tested, covering acceptance criteria 1 to 8 of `docs/prd.md`.
+The scaffold, domain, and single-screen calculator UI exist. Automated tests cover acceptance criteria 1 to 15 of `docs/prd.md`; `src/domain/` retains 100% line and branch coverage.
 
-What does not exist yet: the UI and criteria 9 to 15. `src/App.tsx` is a shell, `src/components/` has not been created and there is no CI. The "Structure" section below already describes `src/domain/` and `src/copy/`; `components/` is still a target, not a description.
+What does not exist yet: CI and static hosting. The release gate remains manual until those decisions are made.
 
 Before writing the UI, read `docs/adr/0003-peso-ideal-e-perfis-suportados.md`. It decides that the weight asked for is the **ideal weight** and pins three on-screen texts that are not optional.
 

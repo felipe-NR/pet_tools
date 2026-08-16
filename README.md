@@ -18,9 +18,9 @@ The product copy the user reads is Portuguese too, and lives in `src/copy/`. See
 
 ## Status
 
-Scaffold and calculation engine done. `src/domain/` covers acceptance criteria 1 to 8 of the PRD, with 100% line and branch coverage.
+The calculation engine and responsive single-screen interface are implemented. Automated tests cover all 15 acceptance criteria in the PRD, and `src/domain/` has 100% line and branch coverage.
 
-Not built yet: the interface, criteria 9 to 15.
+Not configured yet: CI and static hosting.
 
 ## Commands
 
