@@ -34,10 +34,11 @@ describe('weightViolationMessage', () => {
   });
 
   it('names the expected format when the value is not numeric', () => {
-    // 12,5 is inside the range: without naming the separator, the message
-    // tells the user to do exactly what they just did.
-    expect(weightViolationMessage(weightViolationOf('12,5', 'dog'), 'dog')).toBe(
-      'Peso inválido: recebido "12,5", esperado número entre 0.5 e 100 kg para cão, ' +
+    // The weight typed with its unit is rejected, and the 4,5 the user meant
+    // is inside the range: quoting only the range would tell them to do
+    // exactly what they just did.
+    expect(weightViolationMessage(weightViolationOf('4,5 kg', 'dog'), 'dog')).toBe(
+      'Peso inválido: recebido "4,5 kg", esperado número entre 0.5 e 100 kg para cão, ' +
         'com ponto decimal e não vírgula',
     );
   });
@@ -58,8 +59,10 @@ describe('metabolizableEnergyViolationMessage', () => {
   });
 
   it('names the expected format when the value is not numeric', () => {
-    expect(metabolizableEnergyViolationMessage(energyViolationOf('3.500,5'))).toBe(
-      'Energia metabolizável inválida: recebido "3.500,5", esperado número entre 200 e ' +
+    // The label value copied with its unit. "3.500" alone parses since ADR
+    // 0006; the unit is what breaks it, and 3500 is inside the range.
+    expect(metabolizableEnergyViolationMessage(energyViolationOf('3.500 kcal/kg'))).toBe(
+      'Energia metabolizável inválida: recebido "3.500 kcal/kg", esperado número entre 200 e ' +
         '8000 kcal/kg, com ponto decimal e não vírgula',
     );
   });

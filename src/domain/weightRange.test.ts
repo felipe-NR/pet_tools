@@ -59,11 +59,27 @@ describe('validateWeightInKilograms', () => {
   });
 
   it('separates a non-numeric value from an out-of-range one', () => {
-    // 12,5 sits inside the range: only the reason tells the copy layer to
-    // mention the decimal separator.
-    expect(validateWeightInKilograms('12,5', 'dog')).toEqual({
+    // "1.2.3" sits nowhere, but a rejected value often does sit inside the
+    // range: only the reason tells the copy layer to name the accepted format.
+    expect(validateWeightInKilograms('1.2.3', 'dog')).toEqual({
       valid: false,
-      violation: { reason: 'notANumber', received: '12,5', minimum: 0.5, maximum: 100 },
+      violation: { reason: 'notANumber', received: '1.2.3', minimum: 0.5, maximum: 100 },
+    });
+  });
+
+  it('accepts the weight written the way a Brazilian types it', () => {
+    // ADR 0006. This is the whole point of the field: 4,5 kg is a plausible
+    // small dog and used to be rejected as non-numeric.
+    expect(validateWeightInKilograms('4,5', 'dog')).toEqual({ valid: true, value: 4.5 });
+    expect(validateWeightInKilograms('12,5', 'dog')).toEqual({ valid: true, value: 12.5 });
+  });
+
+  it('reads an ambiguous 1.500 as 1500 kg and reports it out of range', () => {
+    // The regression ADR 0006 accepts, and it is visible rather than silent:
+    // the user reads the value back and retypes it as 1,5.
+    expect(validateWeightInKilograms('1.500', 'dog')).toEqual({
+      valid: false,
+      violation: { reason: 'outOfRange', received: '1.500', minimum: 0.5, maximum: 100 },
     });
   });
 

@@ -58,6 +58,24 @@ describe('App calculator flow', () => {
     expect(within(result).getAllByRole('listitem')).toHaveLength(3);
   });
 
+  it('calculates from the weight and the energy typed in pt-BR notation', async () => {
+    // Same first example of docs/dominio-nutricional.md, written the way the
+    // user writes it: decimal comma on the weight, thousands dot on the energy
+    // as the label prints it. Same result, or the notation is changing the
+    // arithmetic. See ADR 0006.
+    const user = userEvent.setup();
+    render(<App />);
+
+    await user.type(screen.getByLabelText(IDEAL_WEIGHT_FIELD_LABEL), '10,0');
+    await user.type(screen.getByLabelText(ENERGY_FIELD_LABEL), '3.500');
+    await user.click(screen.getByRole('button', { name: FORM_SUBMIT_LABEL }));
+
+    const result = screen.getByRole('region', { name: RESULT_TITLE });
+    expect(within(result).getByText(formatDailyPortion(180))).toBeVisible();
+    expect(within(result).getByText(formatDailyCalories(630))).toBeVisible();
+    expect(screen.queryByRole('alert')).not.toBeInTheDocument();
+  });
+
   it('shows the estimate warning and ideal-weight direction inside the result', async () => {
     const user = userEvent.setup();
     render(<App />);
