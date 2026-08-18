@@ -109,6 +109,8 @@ Na apresentação:
 |espécie|`dog`, `cat`|qualquer outro valor|
 |perfil|um dos seis da tabela|qualquer outro valor|
 
+**Notação aceita nos campos numéricos.** Vírgula é o separador decimal e ponto é o separador de milhar, como se escreve em português: `4,5` é 4,5 e `3.500` é 3 500. Ponto decimal também é aceito, então `0.5` continua valendo. Quando um `X.YYY` é ambíguo, milhar ganha — `1.500` no peso é 1 500 e cai fora da faixa, em vez de virar 1,5. Regra completa e motivo no [ADR 0006](./adr/0006-entrada-numerica-em-pt-br.md).
+
 Fora da faixa típica de ração seca (2 500 a 5 000 kcal/kg) o cálculo prossegue, mas a UI mostra aviso de que o valor é atípico e pede conferência do rótulo. Isso cobre ração úmida sem bloquear o usuário.
 
 ## Armadilhas conhecidas
