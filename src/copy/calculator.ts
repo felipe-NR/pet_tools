@@ -93,6 +93,15 @@ export function formatPortionStep(mer: number, rawEnergy: string, roundedGrams: 
   );
 }
 
-function formatPortugueseNumber(value: number): string {
+/**
+ * Formats a number the way pt-BR reads it: comma decimal, no more than one
+ * decimal place. Shared with `src/copy/fieldMessages.ts` so a validation
+ * range never prints a dot while the field that enforces it reads a comma —
+ * see ADR 0006.
+ *
+ * @example
+ * formatPortugueseNumber(8000); // '8.000'
+ */
+export function formatPortugueseNumber(value: number): string {
   return new Intl.NumberFormat('pt-BR', { maximumFractionDigits: 1 }).format(value);
 }

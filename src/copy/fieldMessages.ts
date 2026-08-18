@@ -1,6 +1,7 @@
 import { describeRawValue } from '../domain/fieldValidation';
 import type { FieldViolation } from '../domain/fieldValidation';
 import type { Species } from '../domain/petProfile';
+import { formatPortugueseNumber } from './calculator';
 
 /**
  * Portuguese text the user reads under a form field.
@@ -29,26 +30,40 @@ export function speciesLabel(species: Species): string {
 }
 
 /**
+ * Suffix for a value that did not parse at all.
+ *
+ * An unparsed value often sits inside the range anyway — "4,5 kg" is a weight
+ * this calculator accepts, typed with its unit — so quoting only the range
+ * would tell the user to do exactly what they just did. Since ADR 0006 the
+ * field reads the pt-BR notation, so there is no separator left to correct and
+ * the suffix shows the shape of an accepted value instead.
+ *
+ * @example
+ * acceptedFormatSuffix('4,5'); // ', no formato 4,5'
+ */
+function acceptedFormatSuffix(example: string): string {
+  return `, no formato ${example}`;
+}
+
+/**
  * Message for a rejected weight field.
  *
  * Carries the offending value and the expected range, per acceptance criterion
- * 4 of docs/prd.md. When the value is not numeric at all it also names the
- * format: without that, someone typing "12,5" reads that a number between 0.5
- * and 100 was expected — a range 12,5 sits inside — and never learns the
- * separator is a dot.
+ * 4 of docs/prd.md, and an example of the accepted format when the value is
+ * not numeric at all.
  *
  * @example
  * weightViolationMessage(violation, 'cat');
- * // 'Peso inválido: recebido 20, esperado número entre 0.5 e 15 kg para gato'
+ * // 'Peso inválido: recebido 20, esperado número entre 0,5 e 15 kg para gato'
  */
 export function weightViolationMessage(violation: FieldViolation, species: Species): string {
   const expectation =
-    `esperado número entre ${String(violation.minimum)} e ${String(violation.maximum)} kg ` +
-    `para ${speciesLabel(species)}`;
+    `esperado número entre ${formatPortugueseNumber(violation.minimum)} e ` +
+    `${formatPortugueseNumber(violation.maximum)} kg para ${speciesLabel(species)}`;
   const opening = `Peso inválido: recebido ${describeRawValue(violation.received)}`;
 
   if (violation.reason === 'notANumber') {
-    return `${opening}, ${expectation}, com ponto decimal e não vírgula`;
+    return `${opening}, ${expectation}${acceptedFormatSuffix('4,5')}`;
   }
 
   return `${opening}, ${expectation}`;
@@ -59,16 +74,16 @@ export function weightViolationMessage(violation: FieldViolation, species: Speci
  *
  * @example
  * metabolizableEnergyViolationMessage(violation);
- * // 'Energia metabolizável inválida: recebido 100, esperado número entre 200 e 8000 kcal/kg'
+ * // 'Energia metabolizável inválida: recebido 100, esperado número entre 200 e 8.000 kcal/kg'
  */
 export function metabolizableEnergyViolationMessage(violation: FieldViolation): string {
   const expectation =
-    `esperado número entre ${String(violation.minimum)} e ` +
-    `${String(violation.maximum)} kcal/kg`;
+    `esperado número entre ${formatPortugueseNumber(violation.minimum)} e ` +
+    `${formatPortugueseNumber(violation.maximum)} kcal/kg`;
   const opening = `Energia metabolizável inválida: recebido ${describeRawValue(violation.received)}`;
 
   if (violation.reason === 'notANumber') {
-    return `${opening}, ${expectation}, com ponto decimal e não vírgula`;
+    return `${opening}, ${expectation}${acceptedFormatSuffix('3500')}`;
   }
 
   return `${opening}, ${expectation}`;
