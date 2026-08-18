@@ -11,7 +11,7 @@ export default defineConfig({
     setupFiles: ['./src/test/setup.ts'],
     // AGENTS.md > Tests: every test runs headless, with no manual seeding and
     // no missing configuration. Tests sit next to the code they cover.
-    include: ['src/**/*.test.{ts,tsx}', 'vite.config.test.ts'],
+    include: ['src/**/*.test.{ts,tsx}', 'vite.config.test.ts', 'ci-and-deploy.test.ts'],
     coverage: {
       provider: 'v8',
       include: ['src/**/*.{ts,tsx}'],
