@@ -135,9 +135,9 @@ describe('calculateDailyPortion', () => {
 
   it('distinguishes a non-numeric field from an out-of-range one when throwing', () => {
     expect(() =>
-      calculateDailyPortion({ ...validInput(), metabolizableEnergyKcalPerKilogram: '3.500,5' }),
+      calculateDailyPortion({ ...validInput(), metabolizableEnergyKcalPerKilogram: '3,500.5' }),
     ).toThrow(
-      'Invalid metabolizable energy (notANumber): received "3.500,5", ' +
+      'Invalid metabolizable energy (notANumber): received "3,500.5", ' +
         'expected a decimal number between 200 and 8000',
     );
   });

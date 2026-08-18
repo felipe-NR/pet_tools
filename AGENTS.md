@@ -89,7 +89,9 @@ Dependencies run one way: `copy/` and `components/` import from `domain/`, never
 Two kinds, and they do not mix:
 
 - **Developer-facing exceptions**, in English, carry the offending value and the expectation: `Invalid weight for the RER calculation: received -3, expected a positive number in kg`. Never `Invalid input`. Reaching one of these means a caller broke a contract.
-- **User-facing messages** are never built in `src/domain/`. Validation returns a `FieldViolation` — reason, received value, minimum, maximum — and `src/copy/` writes the Portuguese sentence, carrying the offending value and the expected format: `Peso inválido: recebido -3, esperado número entre 0.5 e 100 kg para cão`. When the value did not parse at all, the message also names the format, because a rejected `12,5` sits inside the accepted range and quoting only the range would tell the user to do what they just did.
+- **User-facing messages** are never built in `src/domain/`. Validation returns a `FieldViolation` — reason, received value, minimum, maximum — and `src/copy/` writes the Portuguese sentence, carrying the offending value and the expected format: `Peso inválido: recebido -3, esperado número entre 0.5 e 100 kg para cão`. When the value did not parse at all, the message also shows an example of the accepted format, because a rejected value may well sit inside the accepted range and quoting only the range would tell the user to do what they just did.
+
+Numeric fields read input the way a Brazilian writes it — decimal comma, dot as thousands separator, dot decimal still accepted. See ADR 0006.
 
 ## Comments
 

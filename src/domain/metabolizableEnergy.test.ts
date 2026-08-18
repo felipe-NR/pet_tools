@@ -46,11 +46,17 @@ describe('validateMetabolizableEnergy', () => {
   });
 
   it('separates a non-numeric value from an out-of-range one', () => {
-    // "3.500,5" is how a label writes it, and it is inside the range.
-    expect(validateMetabolizableEnergy('3.500,5')).toEqual({
+    expect(validateMetabolizableEnergy('3,500.5')).toEqual({
       valid: false,
-      violation: { reason: 'notANumber', received: '3.500,5', minimum: 200, maximum: 8000 },
+      violation: { reason: 'notANumber', received: '3,500.5', minimum: 200, maximum: 8000 },
     });
+  });
+
+  it('accepts the energy copied straight from the label', () => {
+    // "3.500" and "3.500,5" are how the label prints it — ADR 0006. Before
+    // that decision both were rejected, and "3.500" alone read as 3,5.
+    expect(validateMetabolizableEnergy('3.500')).toEqual({ valid: true, value: 3500 });
+    expect(validateMetabolizableEnergy('3.500,5')).toEqual({ valid: true, value: 3500.5 });
   });
 
   it('never returns display text, only the data the copy layer needs', () => {

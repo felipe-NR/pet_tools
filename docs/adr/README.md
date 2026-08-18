@@ -15,3 +15,4 @@ Seções: Status, Data, Contexto, Decisão, Alternativas descartadas, Consequên
 |[0003](./0003-peso-ideal-e-perfis-suportados.md)|Peso informado é o peso ideal; perda de peso, trabalho e idoso ficam de fora|Aceito|
 |[0004](./0004-ingles-no-codigo-copy-em-portugues.md)|Inglês fora de `docs/`; copy do produto em português, isolada em `src/copy/`|Aceito|
 |[0005](./0005-github-actions-e-github-pages.md)|GitHub Actions para CI e GitHub Pages para hospedagem|Aceito|
+|[0006](./0006-entrada-numerica-em-pt-br.md)|Entrada numérica em pt-BR: vírgula decimal e ponto de milhar|Aceito|

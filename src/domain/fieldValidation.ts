@@ -51,12 +51,24 @@ export type FieldValidation<T> =
 const DECIMAL_INPUT_PATTERN = /^-?\d+(?:\.\d+)?$/;
 
 /**
+ * pt-BR notation with a thousands separator: `3.500`, `3.500,5`, `1.234.567`.
+ *
+ * Dots only count as grouping when every group has three digits, which is what
+ * keeps `0.5` and `4.5` out of here and reading as decimals. See ADR 0006.
+ */
+const GROUPED_BRAZILIAN_PATTERN = /^-?\d{1,3}(?:\.\d{3})+(?:,\d+)?$/;
+
+/** pt-BR notation without grouping: `4,5`, `0,5`, `-3,5`, `12`. */
+const DECIMAL_COMMA_PATTERN = /^-?\d+(?:,\d+)?$/;
+
+/**
  * Converts raw input into a number, or returns `null` when it is not a usable
  * decimal.
  *
  * @example
  * parseDecimalInput('  25 ');   // 25
- * parseDecimalInput('12,5');    // null
+ * parseDecimalInput('4,5');     // 4.5
+ * parseDecimalInput('3.500');   // 3500
  * parseDecimalInput('0x1194');  // null
  */
 export function parseDecimalInput(rawValue: unknown): number | null {
@@ -68,13 +80,38 @@ export function parseDecimalInput(rawValue: unknown): number | null {
     return null;
   }
 
-  const trimmedValue = rawValue.trim();
-  if (!DECIMAL_INPUT_PATTERN.test(trimmedValue)) {
+  const dotDecimalValue = rewriteToDotDecimal(rawValue.trim());
+  if (dotDecimalValue === null) {
     return null;
   }
 
-  const parsedValue = Number(trimmedValue);
+  const parsedValue = Number(dotDecimalValue);
   return Number.isFinite(parsedValue) ? parsedValue : null;
+}
+
+/**
+ * Rewrites an accepted notation into the dot-decimal string `Number()` reads,
+ * or returns `null` when the input is none of them.
+ *
+ * The order is the decision, not an implementation detail: `1.500` matches
+ * both the grouped pattern and the dot-decimal one, and grouping wins. ADR
+ * 0006 explains why that is safe — for any `X.YYY` the two readings land on
+ * opposite sides of every range this domain accepts, so the losing reading can
+ * only ever surface as an out-of-range message, never as a plausible portion.
+ *
+ * @example
+ * rewriteToDotDecimal('3.500,5'); // '3500.5'
+ */
+function rewriteToDotDecimal(trimmedValue: string): string | null {
+  if (GROUPED_BRAZILIAN_PATTERN.test(trimmedValue)) {
+    return trimmedValue.replaceAll('.', '').replace(',', '.');
+  }
+
+  if (DECIMAL_COMMA_PATTERN.test(trimmedValue)) {
+    return trimmedValue.replace(',', '.');
+  }
+
+  return DECIMAL_INPUT_PATTERN.test(trimmedValue) ? trimmedValue : null;
 }
 
 /**
