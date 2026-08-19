@@ -1,10 +1,4 @@
-import {
-  APP_EYEBROW,
-  APP_SUBTITLE,
-  APP_TITLE,
-  OUT_OF_SCOPE_NOTICE,
-  OVERWEIGHT_GUIDANCE,
-} from './copy/calculator';
+import { APP_EYEBROW, OUT_OF_SCOPE_NOTICE, OVERWEIGHT_GUIDANCE } from './copy/calculator';
 import { DailyPortionCalculator } from './components/DailyPortionCalculator';
 import styles from './App.module.css';
 
@@ -12,16 +6,13 @@ import styles from './App.module.css';
 export function App(): React.JSX.Element {
   return (
     <main className={styles.page}>
-      <header className={styles.hero}>
-        <p className={styles.eyebrow}>{APP_EYEBROW}</p>
-        <h1>{APP_TITLE}</h1>
-        <p className={styles.subtitle}>{APP_SUBTITLE}</p>
-      </header>
-      <aside className={styles.scope}>
-        <p>{OUT_OF_SCOPE_NOTICE}</p>
-        <p>{OVERWEIGHT_GUIDANCE}</p>
-      </aside>
-      <DailyPortionCalculator />
+      <div className={styles.calculationArea}>
+        <DailyPortionCalculator />
+        <aside className={styles.scope} aria-label={APP_EYEBROW}>
+          <p>{OUT_OF_SCOPE_NOTICE}</p>
+          <p>{OVERWEIGHT_GUIDANCE}</p>
+        </aside>
+      </div>
     </main>
   );
 }

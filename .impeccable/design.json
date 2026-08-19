@@ -1,0 +1,252 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-08-19T18:05:00-03:00",
+  "title": "Design System: Pet Tools",
+  "extensions": {
+    "colorMeta": {
+      "ink": {
+        "role": "neutral",
+        "displayName": "Instrument Ink",
+        "canonical": "#082136",
+        "tonalRamp": [
+          "#06111c",
+          "#082136",
+          "#0d314d",
+          "#17425f",
+          "#345b73",
+          "#668698",
+          "#acc3cd",
+          "#edf6f8"
+        ]
+      },
+      "night": {
+        "role": "neutral",
+        "displayName": "Instrument Night",
+        "canonical": "#061f31",
+        "tonalRamp": [
+          "#031019",
+          "#061f31",
+          "#0a2c43",
+          "#174760",
+          "#376d82",
+          "#729daa",
+          "#b8d5db",
+          "#eff9fa"
+        ]
+      },
+      "paper": {
+        "role": "neutral",
+        "displayName": "Warm Paper",
+        "canonical": "#fff8e8",
+        "tonalRamp": [
+          "#302a23",
+          "#5d5346",
+          "#887b6b",
+          "#b4a693",
+          "#d7cbb7",
+          "#f2e8d4",
+          "#fff8e8",
+          "#fffdf5"
+        ]
+      },
+      "paper-deep": {
+        "role": "neutral",
+        "displayName": "Deep Paper",
+        "canonical": "#f2e8d4",
+        "tonalRamp": [
+          "#29251f",
+          "#50483c",
+          "#786e5e",
+          "#a39985",
+          "#c9bea9",
+          "#e1d6c1",
+          "#f2e8d4",
+          "#fffaf0"
+        ]
+      },
+      "vermilion": {
+        "role": "primary",
+        "displayName": "Calibration Vermilion",
+        "canonical": "#ef3d26",
+        "tonalRamp": [
+          "#420c09",
+          "#72140d",
+          "#9d2117",
+          "#be291d",
+          "#ef3d26",
+          "#f76f55",
+          "#ffab96",
+          "#ffe1d8"
+        ]
+      },
+      "vermilion-deep": {
+        "role": "primary",
+        "displayName": "Stamped Vermilion",
+        "canonical": "#be291d",
+        "tonalRamp": [
+          "#3c0a07",
+          "#67110b",
+          "#8f1c13",
+          "#be291d",
+          "#df4431",
+          "#f4745d",
+          "#ffae9e",
+          "#ffdfd8"
+        ]
+      },
+      "seafoam": {
+        "role": "secondary",
+        "displayName": "Measured Seafoam",
+        "canonical": "#bfddd0",
+        "tonalRamp": [
+          "#12312d",
+          "#1e514a",
+          "#35766c",
+          "#609f90",
+          "#8fc3b4",
+          "#bfddd0",
+          "#d9eee5",
+          "#f2fbf6"
+        ]
+      },
+      "line": {
+        "role": "neutral",
+        "displayName": "Measurement Line",
+        "canonical": "#9aa5a1",
+        "tonalRamp": [
+          "#1c2423",
+          "#353f3d",
+          "#535f5b",
+          "#727e79",
+          "#9aa5a1",
+          "#bec7c3",
+          "#dce3df",
+          "#f3f7f4"
+        ]
+      },
+      "focus": {
+        "role": "primary",
+        "displayName": "Focus Ink",
+        "canonical": "#15425b",
+        "tonalRamp": [
+          "#06131d",
+          "#0b2838",
+          "#15425b",
+          "#286178",
+          "#4e8595",
+          "#85b6bd",
+          "#c6e1e3",
+          "#f0fbfb"
+        ]
+      },
+      "danger": {
+        "role": "primary",
+        "displayName": "Clinical Danger",
+        "canonical": "#b1231d",
+        "tonalRamp": [
+          "#380908",
+          "#64100d",
+          "#8e1914",
+          "#b1231d",
+          "#d4493f",
+          "#eb756b",
+          "#f8aea6",
+          "#fde1dd"
+        ]
+      }
+    },
+    "typographyMeta": {
+      "display": {
+        "displayName": "Measurement Display",
+        "purpose": "Task title, result values, and compact ticket headings."
+      },
+      "body": { "displayName": "Clinical Body", "purpose": "Guidance and explanatory copy." },
+      "label": {
+        "displayName": "Station Label",
+        "purpose": "Input labels, step numbers, and instrument markers."
+      }
+    },
+    "shadows": [
+      {
+        "name": "sheet-lift",
+        "value": "0 1.4rem 3.6rem rgb(0 8 18 / 34%)",
+        "purpose": "Separate the complete calibration field from the night ground."
+      }
+    ],
+    "motion": [
+      {
+        "name": "action-press",
+        "value": "background 160ms ease-out, transform 160ms ease-out",
+        "purpose": "Primary action feedback; disabled under prefers-reduced-motion."
+      }
+    ],
+    "breakpoints": [
+      { "name": "single-column", "value": "56rem" },
+      { "name": "compact-summary", "value": "27rem" }
+    ]
+  },
+  "components": [
+    {
+      "name": "Primary Calculation Button",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "The single committed action that closes the input sequence.",
+      "html": "<button class=\"ds-btn-primary\">CALCULAR PORÇÃO DIÁRIA <span aria-hidden=\"true\">→</span></button>",
+      "css": ".ds-btn-primary{background:#ef3d26;color:#fff8e8;border:1px solid #082136;border-radius:0;box-shadow:inset 0 -0.25rem 0 rgb(121 24 18 / 55%);padding:.75rem 1rem;font-family:'Plex Condensed',sans-serif;font-weight:850;letter-spacing:.045em;text-transform:uppercase;transition:background 160ms ease-out,transform 160ms ease-out}.ds-btn-primary:hover{background:#be291d;transform:translateY(-1px)}.ds-btn-primary:focus-visible{outline:3px solid #15425b;outline-offset:3px}.ds-btn-primary:active{transform:translateY(0);box-shadow:none}"
+    },
+    {
+      "name": "Measurement Field",
+      "kind": "input",
+      "refersTo": "field-input",
+      "description": "A numbered station for a form value, designed to sit in a ruled calibration sequence.",
+      "html": "<label class=\"ds-field\"><span>02 PESO IDEAL (KG)</span><input value=\"10\" aria-label=\"Peso ideal\" /></label>",
+      "css": ".ds-field{display:grid;gap:.45rem;color:#082136;font-family:ui-sans-serif,system-ui,sans-serif;font-size:.9rem;font-weight:850}.ds-field input{min-height:3.25rem;padding:.72rem .75rem;border:1px solid #082136;border-radius:0;background:#fff8e8;color:#082136;font:inherit;font-variant-numeric:tabular-nums}.ds-field input:focus{outline:3px solid #15425b;outline-offset:3px}.ds-field input[aria-invalid='true']{border-color:#b1231d;background:#fff0e8}"
+    },
+    {
+      "name": "Calculation Ticket",
+      "kind": "custom",
+      "description": "Persistent result substrate that pairs the answer with its three-step audit trail.",
+      "html": "<section class=\"ds-ticket\"><strong>180 g/dia</strong><ol><li>RER = 393,6 kcal/dia</li><li>MER = 629,8 kcal/dia</li><li>Porção = 180 g/dia</li></ol></section>",
+      "css": ".ds-ticket{padding:1.25rem;background:#fff8e8;color:#082136;font-family:ui-sans-serif,system-ui,sans-serif}.ds-ticket strong{display:block;color:#ef3d26;font-family:'Plex Condensed',sans-serif;font-size:4rem;line-height:.84}.ds-ticket ol{display:grid;gap:.6rem;margin:1rem 0 0;padding:0;list-style:none}.ds-ticket li{padding:.75rem;background:#bfddd0;color:#173a3a;font-variant-numeric:tabular-nums}"
+    }
+  ],
+  "narrative": {
+    "northStar": "The Pantry Calibration Sheet",
+    "overview": "The interface feels like a durable measurement sheet used beside a food package and a kitchen scale. It is operational, tactile, and exact: an ink-blue instrument field holds warm paper sheets, while the calculation itself is always visible and traceable. The system earns expression through measurement details—rules, numbered stations, tabular figures, and dense formula trails—not through decoration or a generic app shell.",
+    "keyCharacteristics": [
+      "Two-material contrast: physical paper against an instrument-dark field.",
+      "Condensed display lettering for task hierarchy and measurements.",
+      "Vermilion is reserved for commitment, exceptions, and the daily-portion focal value.",
+      "The calculated result is a ticket with a visible audit trail, never an unexplained metric."
+    ],
+    "rules": [
+      {
+        "name": "The Accent Has a Job Rule",
+        "body": "Vermilion marks an action, a warning, or the answer; it is not a general-purpose decoration.",
+        "section": "colors"
+      },
+      {
+        "name": "The Measurement Voice Rule",
+        "body": "Use the condensed face only where the visitor is locating a step, a unit, or a result; prose stays in the body face.",
+        "section": "typography"
+      },
+      {
+        "name": "The One Lift Rule",
+        "body": "Lift the assembled work surface, not each field or result row.",
+        "section": "elevation"
+      }
+    ],
+    "dos": [
+      "Do preserve the paper-sheet versus dark-instrument contrast in every new operational surface.",
+      "Do make quantities tabular, visibly labelled, and adjacent to their units.",
+      "Do keep the calculation trace close to its answer when a result depends on user-entered values.",
+      "Do keep keyboard focus, error text, and reduced-motion behavior visible inside the same material system."
+    ],
+    "donts": [
+      "Don't use rounded dashboard cards, glass effects, or floating metric tiles in place of the measurement sheet.",
+      "Don't scatter vermilion through neutral content; reserve it for meaningful action and emphasis.",
+      "Don't introduce navigation or a marketing hero before an operating task.",
+      "Don't replace the paper texture with a generic grain or unproven medical imagery."
+    ]
+  }
+}

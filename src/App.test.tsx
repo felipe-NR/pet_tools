@@ -8,6 +8,8 @@ import {
   CALCULATION_STEPS_TITLE,
   DAILY_CALORIES_LABEL,
   DAILY_PORTION_LABEL,
+  EMPTY_RESULT_MESSAGE,
+  EMPTY_RESULT_TITLE,
   ENERGY_FIELD_LABEL,
   ESTIMATE_NOTICE,
   formatDailyCalories,
@@ -40,6 +42,14 @@ describe('App calculator flow', () => {
     expect(screen.getByLabelText(IDEAL_WEIGHT_FIELD_LABEL)).toBeVisible();
     expect(screen.getByLabelText(PROFILE_FIELD_LABEL)).toBeVisible();
     expect(screen.getByLabelText(ENERGY_FIELD_LABEL)).toBeVisible();
+  });
+
+  it('keeps a visible result preview before the first calculation', () => {
+    render(<App />);
+
+    expect(screen.getByText(EMPTY_RESULT_TITLE)).toBeVisible();
+    expect(screen.getByText(EMPTY_RESULT_MESSAGE)).toBeVisible();
+    expect(screen.queryByRole('region', { name: RESULT_TITLE })).not.toBeInTheDocument();
   });
 
   it('calculates the daily portion and shows every rounded calculation step', async () => {
