@@ -1,7 +1,7 @@
 .form {
   padding: clamp(1.25rem, 3vw, 2.5rem);
   background:
-    url('../../public/assets/calibration-paper-texture.png') center / 34rem repeat,
+    url('/assets/calibration-paper-texture.png') center / 34rem repeat,
     repeating-linear-gradient(90deg, transparent 0 0.8rem, var(--paper-deep) 0.8rem 1.15rem) top /
       auto 0.5rem no-repeat,
     var(--paper);

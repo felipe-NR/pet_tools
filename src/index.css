@@ -1,6 +1,6 @@
 @font-face {
   font-family: 'Plex Condensed';
-  src: url('../public/fonts/IBMPlexSansCondensed-Regular.ttf') format('truetype');
+  src: url('/fonts/IBMPlexSansCondensed-Regular.ttf') format('truetype');
   font-style: normal;
   font-weight: 400;
   font-display: swap;
@@ -8,7 +8,7 @@
 
 @font-face {
   font-family: 'Plex Condensed';
-  src: url('../public/fonts/IBMPlexSansCondensed-Bold.ttf') format('truetype');
+  src: url('/fonts/IBMPlexSansCondensed-Bold.ttf') format('truetype');
   font-style: normal;
   font-weight: 700 900;
   font-display: swap;

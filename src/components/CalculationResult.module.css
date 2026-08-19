@@ -5,7 +5,7 @@
   min-height: 100%;
   overflow: hidden;
   background:
-    url('../../public/assets/calibration-paper-texture.png') center / 34rem repeat,
+    url('/assets/calibration-paper-texture.png') center / 34rem repeat,
     var(--paper);
   background-blend-mode: multiply;
   color: var(--ink);
