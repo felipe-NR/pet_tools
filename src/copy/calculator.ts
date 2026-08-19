@@ -25,6 +25,9 @@ export const ENERGY_FIELD_HELP =
   'Procure a energia metabolizável em uma nota do rótulo, não nos níveis de garantia. Se estiver em kcal/100 g, multiplique por 10. Sem esse valor, não calcule por estimativa.';
 export const FORM_SUBMIT_LABEL = 'Calcular porção diária';
 
+export const EMPTY_RESULT_TITLE = 'Sua porção diária aparece aqui';
+export const EMPTY_RESULT_MESSAGE =
+  'Preencha os quatro dados ao lado para calcular uma estimativa inicial em gramas por dia.';
 export const RESULT_TITLE = 'Porção diária estimada';
 export const DAILY_PORTION_LABEL = 'Quantidade de ração';
 export const DAILY_CALORIES_LABEL = 'Energia diária (MER)';

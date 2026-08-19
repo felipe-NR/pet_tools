@@ -1,5 +1,7 @@
 import type { ChangeEvent, FormEvent, ReactNode } from 'react';
 import {
+  APP_SUBTITLE,
+  APP_TITLE,
   ENERGY_FIELD_HELP,
   ENERGY_FIELD_LABEL,
   FORM_SUBMIT_LABEL,
@@ -39,12 +41,16 @@ export function CalculatorForm(properties: CalculatorFormProperties): React.JSX.
       noValidate
       onSubmit={properties.submitCalculation}
     >
-      <h2 id="calculator-form-title">{FORM_TITLE}</h2>
+      <header className={styles.heading}>
+        <h1 id="calculator-form-title">{APP_TITLE}</h1>
+        <p>{APP_SUBTITLE}</p>
+        <span>{FORM_TITLE}</span>
+      </header>
       <div className={styles.grid}>
-        {speciesField(properties)}
-        {weightField(properties)}
-        {profileField(properties)}
-        {energyField(properties)}
+        {speciesField(properties, '01')}
+        {weightField(properties, '02')}
+        {profileField(properties, '03')}
+        {energyField(properties, '04')}
       </div>
       <button className={styles.submit} type="submit">
         {FORM_SUBMIT_LABEL}
@@ -53,9 +59,10 @@ export function CalculatorForm(properties: CalculatorFormProperties): React.JSX.
   );
 }
 
-function speciesField(properties: CalculatorFormProperties): ReactNode {
+function speciesField(properties: CalculatorFormProperties, step: string): ReactNode {
   return fieldGroup(
     'species',
+    step,
     SPECIES_FIELD_LABEL,
     <select id="species" value={properties.species} onChange={properties.changeSpecies}>
       <option value="dog">{speciesOptionLabelFor('dog')}</option>
@@ -64,9 +71,10 @@ function speciesField(properties: CalculatorFormProperties): ReactNode {
   );
 }
 
-function weightField(properties: CalculatorFormProperties): ReactNode {
+function weightField(properties: CalculatorFormProperties, step: string): ReactNode {
   return fieldGroup(
     'ideal-weight',
+    step,
     IDEAL_WEIGHT_FIELD_LABEL,
     <input
       id="ideal-weight"
@@ -87,9 +95,10 @@ function weightField(properties: CalculatorFormProperties): ReactNode {
   );
 }
 
-function profileField(properties: CalculatorFormProperties): ReactNode {
+function profileField(properties: CalculatorFormProperties, step: string): ReactNode {
   return fieldGroup(
     'profile',
+    step,
     PROFILE_FIELD_LABEL,
     <select
       id="profile"
@@ -109,9 +118,10 @@ function profileField(properties: CalculatorFormProperties): ReactNode {
   );
 }
 
-function energyField(properties: CalculatorFormProperties): ReactNode {
+function energyField(properties: CalculatorFormProperties, step: string): ReactNode {
   return fieldGroup(
     'metabolizable-energy',
+    step,
     ENERGY_FIELD_LABEL,
     <input
       id="metabolizable-energy"
@@ -134,12 +144,16 @@ function energyField(properties: CalculatorFormProperties): ReactNode {
 
 function fieldGroup(
   id: string,
+  step: string,
   label: string,
   control: ReactNode,
   supportingText?: ReactNode,
 ): ReactNode {
   return (
     <div className={styles.field}>
+      <span className={styles.step} aria-hidden="true">
+        {step}
+      </span>
       <label htmlFor={id}>{label}</label>
       {control}
       {supportingText}
