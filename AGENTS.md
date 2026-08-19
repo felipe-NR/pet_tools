@@ -51,6 +51,29 @@ Every command runs with no human setup, no credentials and no network.
 
 Before declaring any task done: `npm run lint && npm test && npm run build`. All three pass or the task is not finished.
 
+## Impeccable
+
+Impeccable is installed project-locally for Codex and Claude Code under
+`.agents/skills/impeccable/` and `.claude/skills/impeccable/`. `PRODUCT.md` is the durable
+product context consumed by its commands. A future root `DESIGN.md` records the visual
+system; until it exists, the current components and CSS are the incumbent visual authority.
+
+- Use `$impeccable <command> <target>` in Codex or `/impeccable <command> <target>` in
+  Claude Code. Common commands include `init`, `document`, `shape`, `critique`, `audit`,
+  `polish`, and `live`.
+- `.impeccable/config.json` sets the shared build path to **comp-first**. New visual
+  surfaces establish and approve a full-fidelity composition before UI code is written;
+  the implementation must reproduce the approved composition.
+- `.codex/hooks.json` and `.claude/settings.local.json` run the design detector after UI
+  edits and at the end of supported sessions. Codex users approve the project hook through
+  `/hooks`; Claude's hook settings remain machine-local and ignored by Git.
+- Ephemeral screenshots, live sessions, caches, and per-developer overrides under
+  `.impeccable/` are ignored. Shared configuration, design records, and critique reports
+  remain versioned.
+- Refresh the installed provider builds with
+  `npx impeccable update --providers=claude,codex --scope=project --yes`, then review the
+  generated diff and reapprove the Codex hook if its definition changed.
+
 ## Structure
 
 ```
